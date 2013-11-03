@@ -39,32 +39,125 @@ public class ExcelParser {
 		while(rowIterator.hasNext()){
 			org.apache.poi.ss.usermodel.Row thisRow=rowIterator.next();
 			java.util.Iterator<Cell> cellIterator=thisRow.iterator();
-			String nam=null;
-			String pos= null;
-			String city=null;
-			int rank=0;
-			for(int i=0;i<4;i++){
+			String name = null;
+			String team = null;
+			String position = null;
+			int rank = 0;
+			String positionalRank = null;
+			int byeWeek = 0;
+			
+			for(int i=0;i<5;i++){
 				Cell thisCell=cellIterator.next();
 				if(i==0){
 					rank=(int) thisCell.getNumericCellValue();
 				}
 				if(i==1){
-					nam = thisCell.getStringCellValue();
+					String result = thisCell.getStringCellValue();
+					//this is where the string parsee should happen
+					name = getPlayerName(result);
+					team = getPlayerTeam(result);
 				}
 				if(i==2){
-					pos = thisCell.getStringCellValue();
+					//String bye =(String) thisCell.getStringCellValue();
+					//byeWeek = Integer.parseInt(bye);
+					//byeWeek = (int) thisCell.getNumericCellValue();
+					if(thisCell.getCellType()==0){
+						byeWeek = (int) thisCell.getNumericCellValue();
+					}
+					else{
+						
+						String bye =(String) thisCell.getStringCellValue();
+						if(bye.contains("--")){
+							byeWeek = 0;
+						}
+						else byeWeek = Integer.parseInt(bye);
+					}
+					
 				}
 				if(i==3){
-					city = thisCell.getStringCellValue();
+					positionalRank = thisCell.getStringCellValue();
+					
+					
+					if(positionalRank.contains("DEF")){
+						position = "DEF";
+					}
+					else{
+						position = positionalRank.substring(0,2);
+						if(position.contains("K"))position="K";
+					}
 				}
 			}
-			Player thisPlayer=new Player(nam,rank,pos,city);
+			Player thisPlayer=new Player(name, rank, position, positionalRank, team, byeWeek);
 			players.add(thisPlayer);
 		}
 	}
 
 	
 	
+	private String getPlayerTeam(String input) {
+		String team = null;
+		if(input.contains(",")){
+			//normal player
+			team = input.substring(input.indexOf(',')+1, input.length());
+		}
+		else{
+			if(input.contains("Seattle"))team ="SEA";
+			if(input.contains("San Fran"))team ="SF";
+			if(input.contains("Baltimore"))team ="BAL";
+			if(input.contains("Chicago"))team ="CHI";
+			if(input.contains("Green Bay"))team = "GB";
+			if(input.contains("Cincinnati"))team ="CIN";
+			if(input.contains("Detroit"))team ="DET";
+			if(input.contains("Minnesota"))team ="MIN";
+			if(input.contains("Atlanta"))team ="ATL";
+			if(input.contains("Carolina"))team ="CAR";
+			if(input.contains("New Orleans"))team ="NO";
+			if(input.contains("Tampa Bay"))team ="TB";
+			if(input.contains("Cleveland"))team ="CLE";
+			if(input.contains("Pittsburgh"))team ="PIT";
+			if(input.contains("Houston"))team ="HOU";
+			if(input.contains("Indianapolis"))team ="IND";
+			if(input.contains("Jacksonville"))team ="JAC";
+			if(input.contains("Tennessee"))team ="TEN";
+			if(input.contains("Buffalo"))team ="BUF";
+			if(input.contains("Miami"))team ="MIA";
+			if(input.contains("New England"))team ="NE";
+			if(input.contains("New York Jets"))team ="NYJ";
+			if(input.contains("New York Giants"))team ="NYG";
+			if(input.contains("Denver"))team ="DEN";
+			if(input.contains("Kansas"))team ="KC";
+			if(input.contains("Oakland"))team ="OAK";
+			if(input.contains("San Diego"))team ="SD";
+			if(input.contains("Dallas"))team ="DAL";
+			if(input.contains("Philadelphia"))team ="PHI";
+			if(input.contains("Washington"))team ="WAS";
+			if(input.contains("Arizona"))team ="ARI";
+			if(input.contains("Seattle"))team ="SEA";
+			if(input.contains("Louis"))team ="STL";
+		}
+		return team;
+	}
+
+
+	private String getPlayerName(String input) {
+		String name;
+		if(input.contains(",")){
+			//normal player
+			name = input.substring(0, input.indexOf(','));
+		}
+		else{
+			//defense player
+			name = input;
+			
+		}
+		return name;
+		
+		
+		
+		
+	}
+
+
 	public HSSFSheet getSheet() {
 		return sheet;
 	}

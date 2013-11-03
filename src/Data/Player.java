@@ -4,13 +4,21 @@ public class Player {
 	public String name;
 	public String team;
 	public String position;
-	public int ranking;
+	public int rank;
+	public String positionalRank;
+	public int byeWeek;
 	
-	public Player(String name, int rank, String position, String city){
+	public Player(String name, int rank, String position, String positionalRank, String team, int byeWeek){
 		this.name=name;
-		team=city;
+		this.rank = rank;
 		this.position=position;
-		this.ranking=rank;
+		this.positionalRank=positionalRank;
+		this.team = team;
+		this.byeWeek=byeWeek;
+		
+		
+		
+		
 	}
 	
 }

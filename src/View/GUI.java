@@ -1,7 +1,9 @@
 package View;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.TextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,24 +14,21 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter; 
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextArea;
-import javax.swing.SpringLayout;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 import javax.swing.*;
 import java.awt.*;
 import java.util.Iterator;
+import java.util.regex.PatternSyntaxException;
 
 
 import javax.swing.JMenu;
@@ -39,6 +38,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.UIManager;
 
 import Data.ExcelParser;
@@ -47,6 +47,8 @@ import Data.Player;
 public class GUI implements ActionListener {
 	
 	JPanel backgroundPanel;
+	JPanel tablePanel;
+	JPanel searchPanel;
 	JFrame frame;
 	JTable playerTable;
 	ArrayList<Player> players;
@@ -67,8 +69,60 @@ public class GUI implements ActionListener {
 			
 		}
 		players = new ArrayList<Player>();
-		//listFilterPanelInit();
+		
 		playerTableInit();
+		searchPanelInit();
+		backgroundPanel.add(searchPanel,BorderLayout.PAGE_START);
+		backgroundPanel.add(tablePanel,BorderLayout.CENTER);
+		backgroundPanel.setVisible(true);
+	}
+	
+	private void searchPanelInit() {
+		searchPanel = new JPanel (new BorderLayout());
+		final JTextField filterCpText = new JTextField();
+        filterCpText.setFont(new Font("Serif", Font.BOLD, 28));
+        filterCpText.setForeground(Color.BLUE);
+        filterCpText.setBackground(Color.LIGHT_GRAY);
+        TableModel myTableModel = playerTable.getModel();
+        final TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(myTableModel);
+        playerTable.setRowSorter(sorter);
+        filterCpText.getDocument().addDocumentListener(new DocumentListener() {
+
+            private void searchFieldChangedUpdate(DocumentEvent evt) {
+                String text = filterCpText.getText();
+                if (text.length() == 0) {
+                    sorter.setRowFilter(null);
+                    playerTable.clearSelection();
+                } else {
+                    try {
+                        sorter.setRowFilter(RowFilter.regexFilter("(?i)" + text, 1));
+                        playerTable.clearSelection();
+                    } catch (PatternSyntaxException pse) {
+                        JOptionPane.showMessageDialog(null, "Bad regex pattern",
+                                "Bad regex pattern", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            }
+
+            @Override
+            public void insertUpdate(DocumentEvent evt) {
+                searchFieldChangedUpdate(evt);
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent evt) {
+                searchFieldChangedUpdate(evt);
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent evt) {
+                searchFieldChangedUpdate(evt);
+            }
+        });
+    
+        
+        searchPanel.add(filterCpText,BorderLayout.CENTER);
+        
 		
 	}
 	private void teamSelectionInit(){
@@ -87,6 +141,10 @@ public class GUI implements ActionListener {
 		
 		
 	}
+	
+	
+	
+	
 	
 	
 	private void playerTableInit() {
@@ -112,10 +170,10 @@ public class GUI implements ActionListener {
 	    
 	    centerColumns();
 		
-		for(int col=0;col<4;col++){
+		for(int col=0;col<5;col++){
 			for(int row=0; row < data.getPlayers().size(); row++ ){
 				if(col==0){
-					int ranking = new Integer(data.getPlayers().get(row).ranking);
+					int ranking = new Integer(data.getPlayers().get(row).rank);
 					playerTable.setValueAt(ranking, row, col);
 				}
 				else if(col==1){
@@ -132,27 +190,18 @@ public class GUI implements ActionListener {
 					playerTable.setValueAt(cityName,row,col);
 					
 				}
+				else if(col == 5){
+					String positionalRank = data.getPlayers().get(row).positionalRank;
+					playerTable.setValueAt(positionalRank, row, col);
+				}
 			}
 		}
 		playerTable.setAutoCreateRowSorter(true);
-		backgroundPanel.add(playerTable.getTableHeader(), BorderLayout.PAGE_START);
-		playerTable.getTableHeader().addMouseListener(new MouseAdapter() {
-		      @Override
-		      public void mouseClicked(MouseEvent mouseEvent) {
-		        //this is where the sort algorithm will go
-		    	  JTableHeader target = (JTableHeader) mouseEvent.getSource();
-		    	  
-	              String headerSelected=target.getName();
-	              
-	              
-	              
-	              
-		    	  mouseEvent.getPoint();
-		      };
-		    });
-		      
-		backgroundPanel.add(playerTable,BorderLayout.CENTER);
-		backgroundPanel.setVisible(true);
+		
+		tablePanel = new JPanel(new BorderLayout());
+		tablePanel.add(new JScrollPane(playerTable));
+		
+		
 		
 	}
 
