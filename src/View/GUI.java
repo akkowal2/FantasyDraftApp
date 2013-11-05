@@ -10,7 +10,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
-
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -26,13 +25,18 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import javax.swing.*;
+
 import java.awt.*;
 import java.util.Iterator;
 import java.util.regex.PatternSyntaxException;
 
 
+
+
 import javax.swing.JMenu;
+
 import java.io.IOException;
+
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -41,6 +45,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
 
+import DBSetup.Connect;
 import Data.ExcelParser;
 import Data.Player;
 
@@ -52,7 +57,6 @@ public class GUI implements ActionListener {
 	JFrame frame;
 	JTable playerTable;
 	ArrayList<Player> players;
-	ExcelParser data;
 	boolean fileOpened;
 	
 	public GUI(){
@@ -64,16 +68,9 @@ public class GUI implements ActionListener {
 		fileOpened=false;
 		initializeBackgroundPanel();
 		initializeBackgroundFrame(backgroundPanel);
+		
 		initializeMenubar();
-		while(fileOpened!=true){
-			try {
-				Thread.sleep(1);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		players = new ArrayList<Player>();
+		openSelection();
 		
 		playerTableInit();
 		searchPanelInit();
@@ -144,19 +141,13 @@ public class GUI implements ActionListener {
 		listFilter.add(positionList, BorderLayout.CENTER );
 		backgroundPanel.add(listFilter, BorderLayout.PAGE_END);
 		
-		
 	}
-	
-	
-	
-	
-	
 	
 	private void playerTableInit() {
 		
 		String columnNames[] = {"Ranking", "Name","Position", "Team"};
 		
-		DefaultTableModel model = new DefaultTableModel(columnNames,data.getPlayers().size()) {
+		DefaultTableModel model = new DefaultTableModel(columnNames,players.size()) {
 		    @Override
 		    public Class<?> getColumnClass(int column) {
 		        if (column == 0) {
@@ -176,27 +167,27 @@ public class GUI implements ActionListener {
 	    centerColumns();
 		
 		for(int col=0;col<5;col++){
-			for(int row=0; row < data.getPlayers().size(); row++ ){
+			for(int row=0; row < players.size(); row++ ){
 				if(col==0){
-					int ranking = new Integer(data.getPlayers().get(row).rank);
+					int ranking = new Integer(players.get(row).rank);
 					playerTable.setValueAt(ranking, row, col);
 				}
 				else if(col==1){
-					String playerName=data.getPlayers().get(row).name;
+					String playerName=players.get(row).name;
 					playerTable.setValueAt(playerName, row, col); 
 				}
 				else if(col==2){
-					String position = data.getPlayers().get(row).position;
+					String position = players.get(row).position;
 					playerTable.setValueAt(position,row,col);
 					
 				}
 				else if (col==3){
-					String cityName = data.getPlayers().get(row).team;
+					String cityName = players.get(row).team;
 					playerTable.setValueAt(cityName,row,col);
 					
 				}
 				else if(col == 5){
-					String positionalRank = data.getPlayers().get(row).positionalRank;
+					String positionalRank = players.get(row).positionalRank;
 					playerTable.setValueAt(positionalRank, row, col);
 				}
 			}
@@ -265,37 +256,8 @@ public class GUI implements ActionListener {
 
 	private void openSelection() {
 		
-	
-		final JFileChooser open = new JFileChooser(new File("/home/drew"));
-	    open.setFileFilter(new FileFilter() {
-	        @Override
-	        public boolean accept(File f) {
-	            if (f.isDirectory()) {
-	                return true;
-	            }
-	            final String name = f.getName();
-	            //note: only accepts files with .txt 
-	            return name.endsWith(".xls");
-	        }
-
-	        public String getDescription() {
-	            return "*.xls";
-	        }
-	    });
-	    open.showOpenDialog(null);
-	    
-	    File selected = open.getSelectedFile();
-	    selected.setWritable(true);
-	    selected.setReadable(true);
-	    FileInputStream file=null;
-		try {
-			file= new FileInputStream(selected);
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		data=new ExcelParser(file);
+		Connect con = new Connect();
+		players=con.getPlayerData();
 		
 		//variable whether to go ahead and get the table data (after succesful excel file)
 		fileOpened=true;
