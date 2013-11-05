@@ -66,7 +66,12 @@ public class GUI implements ActionListener {
 		initializeBackgroundFrame(backgroundPanel);
 		initializeMenubar();
 		while(fileOpened!=true){
-			
+			try {
+				Thread.sleep(1);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		players = new ArrayList<Player>();
 		
