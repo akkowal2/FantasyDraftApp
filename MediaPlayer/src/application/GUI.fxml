@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="application.GUIController">
+  <children>
+    <BorderPane id="backgroundPanel" layoutX="0.0" layoutY="0.0" prefHeight="400.0" prefWidth="600.0">
+      <bottom>
+        <BorderPane id="bottomBorderLayout" prefHeight="78.0" prefWidth="600.0">
+          <bottom>
+            <ProgressBar id="songBar" blendMode="RED" prefHeight="24.0" prefWidth="600.0" progress="-1.0" />
+          </bottom>
+          <center>
+            <TextArea id="infoTextArea" editable="false" prefHeight="40.0" prefWidth="600.0" text="Song Information will go here" wrapText="true" />
+          </center>
+        </BorderPane>
+      </bottom>
+      <center>
+        <TableView fx:id="musicTable" prefHeight="200.0" prefWidth="200.0" tableMenuButtonVisible="false">
+          <columns>
+            <TableColumn fx:id="NameCol" prefWidth="75.0" text="Name" />
+            <TableColumn fx:id="ArtistCol" prefWidth="75.0" text="Artist" />
+          </columns>
+        </TableView>
+      </center>
+      <left>
+        <VBox id="sideVbox" prefHeight="251.0" prefWidth="100.0" />
+      </left>
+      <top>
+        <MenuBar id="menuBar">
+          <menus>
+            <Menu id="fileMenu" mnemonicParsing="false" text="File">
+              <items>
+                <MenuItem mnemonicParsing="false" text="Close" onAction="#functionName"/>
+              </items>
+            </Menu>
+            <Menu id="editMenu" mnemonicParsing="false" text="Edit">
+              <items>
+                <MenuItem mnemonicParsing="false" text="Delete" />
+              </items>
+            </Menu>
+            <Menu id="helpMenu" mnemonicParsing="false" text="Help">
+              <items>
+                <MenuItem mnemonicParsing="false" text="About" />
+              </items>
+            </Menu>
+          </menus>
+        </MenuBar>
+      </top>
+    </BorderPane>
+  </children>
+</AnchorPane>
