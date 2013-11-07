@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="553.0" prefWidth="1010.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="application.Controller">
+  <children>
+    <MenuBar layoutX="0.0" layoutY="0.0" prefHeight="25.0" prefWidth="1010.0">
+      <menus>
+        <Menu mnemonicParsing="false" text="File">
+          <items>
+            <MenuItem mnemonicParsing="false" text="Close" />
+          </items>
+        </Menu>
+      </menus>
+    </MenuBar>
+    <Pane layoutX="0.0" layoutY="0.0" prefHeight="553.0" prefWidth="175.0">
+      <children>
+        <Label alignment="CENTER" contentDisplay="LEFT" layoutX="33.0" layoutY="26.0" prefHeight="50.0" prefWidth="109.0" text="00:00" textAlignment="LEFT" wrapText="false">
+          <font>
+            <Font name="NI7SEG" size="33.0" />
+          </font>
+        </Label>
+        <Label alignment="CENTER" layoutX="32.0" layoutY="62.0" prefHeight="26.0" prefWidth="109.5" text="On The Clock:">
+          <font>
+            <Font name="NI7SEG" size="12.0" />
+          </font>
+        </Label>
+        <Line endX="173.0" endY="125.0" startX="0.0" startY="125.0" />
+        <Line endX="173.0" endY="185.0" startX="0.0" startY="185.0" />
+        <Line endX="173.0" endY="245.0" startX="0.0" startY="245.0" />
+        <Line endX="173.0" endY="305.0" startX="0.0" startY="305.0" />
+        <Line endX="173.0" endY="365.0" startX="0.0" startY="365.0" />
+        <Line endX="173.0" endY="425.0" startX="0.0" startY="425.0" />
+        <Line endX="173.0" endY="485.0" startX="0.0" startY="485.0" />
+        <Label layoutX="4.0" layoutY="88.0" text="7. The McClowns">
+          <font>
+            <Font name="MS UI Gothic" size="23.0" />
+          </font>
+        </Label>
+        <Label alignment="CENTER" layoutX="30.0" layoutY="125.0" prefHeight="60.0" prefWidth="145.0" text="The Shea Nay Nays" textAlignment="CENTER" wrapText="true">
+          <font>
+            <Font name="Lucida Sans Unicode" size="15.0" fx:id="x3" />
+          </font>
+        </Label>
+        <Label alignment="CENTER" font="$x3" layoutX="5.0" layoutY="145.0" text="8." textAlignment="CENTER" />
+        <Label alignment="CENTER" font="$x3" layoutX="5.0" layoutY="205.0" text="9." textAlignment="CENTER" />
+        <Label alignment="CENTER" font="$x3" layoutX="5.0" layoutY="265.0" text="10." textAlignment="CENTER" />
+        <Label alignment="CENTER" font="$x3" layoutX="5.0" layoutY="325.0" text="11." textAlignment="CENTER" />
+        <Label alignment="CENTER" font="$x3" layoutX="5.0" layoutY="385.0" text="12." textAlignment="CENTER" />
+        <Label alignment="CENTER" font="$x3" layoutX="5.0" layoutY="445.0" text="13." textAlignment="CENTER" />
+        <Label alignment="CENTER" font="$x3" layoutX="5.0" layoutY="505.0" text="14." textAlignment="CENTER" />
+        <Label alignment="CENTER" font="$x3" layoutX="30.0" layoutY="185.0" prefHeight="60.0" prefWidth="145.0" text="The Smokin Jays" textAlignment="CENTER" wrapText="true" />
+        <Label alignment="CENTER" font="$x3" layoutX="30.0" layoutY="245.0" prefHeight="60.0" prefWidth="145.0" text="The Sexy Rexys" textAlignment="CENTER" wrapText="true" />
+        <Label alignment="CENTER" font="$x3" layoutX="30.0" layoutY="305.0" prefHeight="60.0" prefWidth="145.0" text="Sweeter than Sweetness" textAlignment="CENTER" wrapText="true" />
+        <Label alignment="CENTER" font="$x3" layoutX="30.0" layoutY="365.0" prefHeight="60.0" prefWidth="145.0" text="Fantasy is My Forte" textAlignment="CENTER" wrapText="true" />
+        <Label alignment="CENTER" font="$x3" layoutX="30.0" layoutY="425.0" prefHeight="60.0" prefWidth="145.0" text="We Alshon Together" textAlignment="CENTER" wrapText="true" />
+        <Label alignment="CENTER" font="$x3" layoutX="30.0" layoutY="485.0" prefHeight="60.0" prefWidth="145.0" text="Thank Ditka for Ditka" textAlignment="CENTER" wrapText="true" />
+      </children>
+    </Pane>
+    <Pane layoutX="172.0" layoutY="188.0" opacity="1.0" prefHeight="366.0" prefWidth="611.0">
+      <children>
+        <TableView fx:id="playerTable" layoutX="0.0" layoutY="0.0" onMouseClicked="#playerClicked" prefHeight="365.0" prefWidth="612.0">
+          <columns>
+            <TableColumn prefWidth="75.0" text="Rank" fx:id="rankColumn" />
+            <TableColumn prefWidth="187.0" text="Name" fx:id="nameColumn" />
+            <TableColumn prefWidth="95.0" text="Position" fx:id="positionColumn" />
+            <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="94.0" text="Team" fx:id="teamColumn" />
+          </columns>
+        </TableView>
+      </children>
+    </Pane>
+    <Pane layoutX="785.0" layoutY="27.0" prefHeight="526.0" prefWidth="225.0">
+      <children>
+        <ListView fx:id="draftHistory" layoutX="-1.0" layoutY="35.0" prefHeight="215.0" prefWidth="225.0" />
+        <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="34.0" layoutX="1.0" layoutY="0.0" stroke="BLACK" strokeType="OUTSIDE" strokeWidth="1.7" width="222.0" />
+        <Text layoutX="26.0" layoutY="25.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Draft History">
+          <font>
+            <Font name="NI7SEG" size="20.0" fx:id="x2" />
+          </font>
+        </Text>
+        <ListView layoutX="-1.0" layoutY="312.0" prefHeight="214.0" prefWidth="225.0" />
+        <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="34.0" layoutX="0.0" layoutY="252.0" stroke="BLACK" strokeType="OUTSIDE" strokeWidth="1.7" width="222.0" />
+        <Text font="$x2" layoutX="25.0" layoutY="277.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Team Rosters" />
+        <MenuBar fx:id="teamBar" layoutX="-2.0" layoutY="288.0" prefWidth="225.0">
+          <menus>
+            <Menu mnemonicParsing="false" text="Choose Team" fx:id="chooseTeam" />
+          </menus>
+        </MenuBar>
+      </children>
+    </Pane>
+    <Pane layoutX="171.0" layoutY="27.0" prefHeight="161.0" prefWidth="612.0">
+      <children>
+        <RadioButton fx:id="allFilter" layoutX="299.0" layoutY="134.0" mnemonicParsing="false" onMouseClicked="#filterPlayers" selected="true" text="All">
+          <toggleGroup>
+            <ToggleGroup fx:id="x1" />
+          </toggleGroup>
+        </RadioButton>
+        <RadioButton fx:id="qbFilter" layoutX="338.0" layoutY="134.0" mnemonicParsing="false" onMouseClicked="#filterPlayers" text="QB" toggleGroup="$x1" />
+        <RadioButton fx:id="defFilter" layoutX="514.0" layoutY="134.0" mnemonicParsing="false" onMouseClicked="#filterPlayers" text="DEF/ST" toggleGroup="$x1" />
+        <RadioButton fx:id="teFilter" layoutX="474.0" layoutY="134.0" mnemonicParsing="false" onMouseClicked="#filterPlayers" text="TE" toggleGroup="$x1" />
+        <RadioButton fx:id="wrFilter" layoutX="427.0" layoutY="134.0" mnemonicParsing="false" onMouseClicked="#filterPlayers" text="WR" toggleGroup="$x1" />
+        <RadioButton fx:id="rbFilter" layoutX="382.0" layoutY="134.0" mnemonicParsing="false" onMouseClicked="#filterPlayers" text="RB" toggleGroup="$x1" />
+        <RadioButton fx:id="kFilter" layoutX="578.0" layoutY="134.0" mnemonicParsing="false" onMouseClicked="#filterPlayers" text="K" toggleGroup="$x1" />
+        <TextField fx:id="search" layoutX="14.0" layoutY="131.0" onKeyReleased="#searchPlayers" prefWidth="202.0" promptText="Search" />
+        <Line endX="36.0" endY="63.0" layoutX="-34.0" layoutY="98.0" startX="36.0" startY="-100.0" />
+        <ImageView fitHeight="93.0" fitWidth="124.0" layoutX="76.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">
+          <image>
+            <Image url="@../../../../Pictures/defaultplayer.jpg" />
+          </image>
+        </ImageView>
+        <Label fx:id="playerInfo" layoutX="204.0" layoutY="41.0" text="Select a Player to View Info/Draft">
+          <font>
+            <Font name="System Italic" size="25.0" />
+          </font>
+        </Label>
+        <Button fx:id="draftPlayer" cancelButton="false" disable="true" layoutX="506.0" layoutY="97.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="96.0" text="Draft Player" />
+      </children>
+    </Pane>
+  </children>
+</AnchorPane>
