@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane fx:id="backgroundPane" prefHeight="500.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.IntroController">
+<top><MenuBar fx:id="menuBar" xmlns:fx="http://javafx.com/fxml">
+  <menus>
+    <Menu fx:id="fileMenu" mnemonicParsing="false" text="File">
+      <items>
+        <MenuItem fx:id="exitMenu" mnemonicParsing="false" text="Exit" />
+      </items>
+    </Menu>
+    <Menu fx:id="editMenu" mnemonicParsing="false" text="Edit" />
+  </menus>
+</MenuBar>
+</top>
+<right><SplitPane id="" fx:id="" dividerPositions="0.8477801268498943" focusTraversable="true" layoutX="220.0" layoutY="100.0" orientation="VERTICAL" prefHeight="200.0" prefWidth="450.0">
+  <items>
+    <AnchorPane id="" minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+<children><TableView id="" fx:id="connectionTable" prefHeight="398.0" prefWidth="298.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" xmlns:fx="http://javafx.com/fxml">
+  <columns>
+    <TableColumn id="teamColumn" fx:id="teamColumn" prefWidth="200.0" text="Team" />
+    <TableColumn id="" fx:id="connectionColumn" prefWidth="200.0" text="Connection " />
+  </columns>
+</TableView>
+</children></AnchorPane>
+    <AnchorPane id="" minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+<children><Button id="" fx:id="startButton" alignment="CENTER" layoutX="106.0" layoutY="9.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="238.0" text="Start Draft" onAction="#startDraft" />
+</children></AnchorPane>
+  </items>
+</SplitPane>
+</right>
+<center><BorderPane id="" fx:id="textPane" prefHeight="200.0" prefWidth="200.0">
+<top><TextArea id="" fx:id="titleBox" prefHeight="55.0" prefWidth="450.0" text="Fantasy Draft" />
+</top>
+<center><TextArea id="" fx:id="instructionBox" text="This is where the instructions and other info goes" />
+</center></BorderPane>
+</center></BorderPane>
