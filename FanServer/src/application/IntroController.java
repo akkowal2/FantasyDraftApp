@@ -28,12 +28,13 @@ public class IntroController implements Initializable{
 		stage.close();
 		DraftView view = new DraftView();
 		view.start(new Stage());
-		Main.server.changeFlag();
+		//Main.server.changeFlag();
 	}
 
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		title = new TextField("Fantasy Draft");
+		title.setId("programTitle");
 		title.setStyle("-fx-text-fill: black;"+
 			    "-fx-background-color: white;"+
 			    "-fx-font-family: GungsuhChe;"+
@@ -41,9 +42,12 @@ public class IntroController implements Initializable{
 			    
 			    "-fx-font-size: 45;");
 		title.setEditable(false);
+		title.selectAll();
 		title.setPrefHeight(100);
 		title.setAlignment(Pos.CENTER);
-		textPane.setTop(title);
+		BorderPane border =  new BorderPane();
+		border.setCenter(title);
+		textPane.setTop(border);
 		
 	}
 

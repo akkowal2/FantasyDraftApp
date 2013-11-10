@@ -36,7 +36,7 @@ public class Server extends Thread {
 		ServerSocket serverSocket = null; 
 
 	    try { 
-	         serverSocket = new ServerSocket(10008, 20, InetAddress.getByName("0.0.0.0")); 
+	         serverSocket = new ServerSocket(10005, 20, InetAddress.getByName("0.0.0.0")); 
 	         String host = serverSocket.getInetAddress().getHostAddress();
 	         System.out.println(host);
 	         System.out.println ("Connection Socket Created");

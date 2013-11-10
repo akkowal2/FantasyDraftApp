@@ -20,7 +20,7 @@ public class Main extends Application {
 			primaryStage.setScene(scene);
 			primaryStage.setResizable(false);
 			primaryStage.show();
-			server =  new Server();
+			//server =  new Server();
 		} catch(Exception e) {
 			e.printStackTrace();
 		}

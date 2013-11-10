@@ -10,6 +10,14 @@ public class Player {
 	private SimpleStringProperty positionalRank;
 	private SimpleIntegerProperty byeWeek;
 	
+	/**
+	 * @param name
+	 * @param rank
+	 * @param position
+	 * @param positionalRank
+	 * @param team
+	 * @param byeWeek
+	 */
 	public Player(String name, int rank, String position, String positionalRank, String team, int byeWeek){
 		this.name=new SimpleStringProperty(name);
 		this.rank = new SimpleIntegerProperty(rank);
@@ -19,6 +27,7 @@ public class Player {
 		this.byeWeek= new SimpleIntegerProperty(byeWeek);
 		
 	}
+	
 	
 	public String getName(){
 		return name.getValue();

@@ -19,96 +19,95 @@
                   <center>
                     <BorderPane fx:id="leftDraft" prefHeight="545.0" prefWidth="257.0">
                       <center>
-                        <BorderPane prefHeight="457.0" prefWidth="255.0">
+                        <BorderPane id="bpaTable" fx:id="bpaTablePane" prefHeight="457.0" prefWidth="255.0">
                           <center>
                             <TableView fx:id="top10Table" prefHeight="356.0" prefWidth="226.0">
                               <columns>
                                 <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="41.0" text="Rank" fx:id="rankCol" />
                                 <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="134.0" text="Name" fx:id="nameCol" />
                                 <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="70.0" text="Position" fx:id="positionCol" />
-                                <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="108.0" text="PR" fx:id="prCol" />
+                                <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="97.0" text="PR" fx:id="prCol" />
+                                <TableColumn prefWidth="75.0" text="Bye Week" fx:id="byeWeek" />
                               </columns>
                             </TableView>
                           </center>
-                          <top>
-                            <AnchorPane prefHeight="58.0" prefWidth="311.0">
-                              <children>
-                                <Text layoutX="111.0" layoutY="34.0" scaleX="3.431849614514605" scaleY="2.8847349419171056" strokeType="OUTSIDE" strokeWidth="0.0" text="Top 10" />
-                              </children>
-                            </AnchorPane>
-                          </top>
                         </BorderPane>
                       </center>
                     </BorderPane>
                   </center>
                   <right>
-                    <BorderPane prefHeight="545.0" prefWidth="450.0">
+                    <BorderPane fx:id="rightDraft" prefHeight="545.0" prefWidth="450.0">
                       <center>
                         <GridPane prefHeight="545.0" prefWidth="450.0">
                           <children>
                             <BorderPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="0" GridPane.rowIndex="0">
                               <center>
-                                <TableView id="qbTable" prefHeight="200.0" prefWidth="200.0">
+                                <TableView id="posTable" fx:id="qbTable" prefHeight="200.0" prefWidth="200.0">
                                   <columns>
-                                    <TableColumn prefWidth="75.0" text="Rank" />
-                                    <TableColumn prefWidth="75.0" text="Name" />
+                                    <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="42.0" text="Rank" fx:id="qbRankCol" />
+                                    <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="106.0" text="Name" fx:id="qbNameCol" />
+                                    <TableColumn prefWidth="75.0" text="Team" fx:id="qbTeamCol" />
                                   </columns>
                                 </TableView>
                               </center>
                               <top>
-                                <TextField alignment="CENTER" prefWidth="200.0" text="Quarterbacks" />
+                                <TextField id="tableTitle" alignment="CENTER" prefWidth="200.0" text="Quarterbacks" />
                               </top>
                             </BorderPane>
                             <BorderPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
                               <center>
-                                <TableView id="wrTable" prefHeight="200.0" prefWidth="200.0">
+                                <TableView id="posTable" fx:id="wrTable" prefHeight="200.0" prefWidth="200.0">
                                   <columns>
-                                    <TableColumn prefWidth="75.0" text="Rank" />
-                                    <TableColumn prefWidth="75.0" text="Name" />
+                                    <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="43.0" text="Rank" fx:id="wrRankCol" />
+                                    <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="104.0" text="Name" fx:id="wrNameCol" />
+                                    <TableColumn prefWidth="75.0" text="Team" fx:id="wrTeamCol" />
                                   </columns>
                                 </TableView>
                               </center>
                               <top>
-                                <TextField alignment="CENTER" prefHeight="24.0" prefWidth="248.0" text="Wide Recievers" />
+                                <TextField id="tableTitle" alignment="CENTER" prefHeight="24.0" prefWidth="248.0" text="Wide Recievers" />
                               </top>
                             </BorderPane>
                             <BorderPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="0" GridPane.rowIndex="1">
                               <bottom>
-                                <TableView id="rbTable" prefHeight="200.0" prefWidth="200.0">
+                                <TableView id="posTable" fx:id="rbTable" prefHeight="200.0" prefWidth="200.0">
                                   <columns>
-                                    <TableColumn prefWidth="75.0" text="Rank" />
-                                    <TableColumn prefWidth="75.0" text="Name" />
+                                    <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="43.0" text="Rank" fx:id="rbRankCol" />
+                                    <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="105.0" text="Name" fx:id="rbNameCol" />
+                                    <TableColumn prefWidth="75.0" text="Team" fx:id="rbTeamCol" />
                                   </columns>
                                 </TableView>
                               </bottom>
                               <top>
-                                <TextField alignment="CENTER" prefHeight="24.0" prefWidth="248.0" text="Runningbacks" />
+                                <TextField id="tableTitle" alignment="CENTER" prefHeight="24.0" prefWidth="248.0" text="Runningbacks" />
                               </top>
                             </BorderPane>
                             <BorderPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                               <center>
-                                <TableView id="teTable" prefHeight="200.0" prefWidth="200.0">
+                                <TableView id="posTable" fx:id="teTable" prefHeight="200.0" prefWidth="200.0">
                                   <columns>
-                                    <TableColumn prefWidth="75.0" text="Rank" />
-                                    <TableColumn prefWidth="75.0" text="Name" />
+                                    <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="45.0" text="Rank" fx:id="teRankCol" />
+                                    <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="102.0" text="Name" fx:id="teNameCol" />
+                                    <TableColumn prefWidth="75.0" text="Team" fx:id="teTeamCol" />
                                   </columns>
                                 </TableView>
                               </center>
                               <top>
-                                <TextField alignment="CENTER" prefWidth="200.0" text="Tight Ends" />
+                                <TextField id="tableTitle" alignment="CENTER" prefWidth="200.0" text="Tight Ends" />
                               </top>
                             </BorderPane>
                             <BorderPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="0" GridPane.rowIndex="2">
                               <center>
-                                <TableView id="defTable" prefHeight="200.0" prefWidth="200.0">
+                                <TableView id="posTable" fx:id="defTable" prefHeight="200.0" prefWidth="200.0">
                                   <columns>
-                                    <TableColumn prefWidth="75.0" text="Rank" />
-                                    <TableColumn prefWidth="75.0" text="Name" />
+                                    <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="43.0" text="Rank" fx:id="defRankCol" />
+                                    <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="105.0" text="Name" fx:id="defNameCol" />
+                                    <TableColumn prefWidth="75.0" text="Team" fx:id="defTeamCol" />
                                   </columns>
                                 </TableView>
                               </center>
                               <top>
-                                <TextField alignment="CENTER" prefWidth="200.0" text="Defense/Special Teams" BorderPane.alignment="CENTER_RIGHT">
+                                <TextField id="tableTitle" alignment="CENTER" prefWidth="200.0" text="Defense/Special Teams" BorderPane.alignment="CENTER_RIGHT">
                                   <BorderPane.margin>
                                     <Insets />
                                   </BorderPane.margin>
@@ -117,15 +116,16 @@
                             </BorderPane>
                             <BorderPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                               <center>
-                                <TableView id="kickerTable" prefHeight="200.0" prefWidth="200.0">
+                                <TableView id="posTable" fx:id="kickTable" prefHeight="200.0" prefWidth="200.0">
                                   <columns>
-                                    <TableColumn prefWidth="75.0" text="Rank" />
-                                    <TableColumn prefWidth="75.0" text="Name" />
+                                    <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="45.0" text="Rank" fx:id="kickRankCol" />
+                                    <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="103.0" text="Name" fx:id="kickNameCol" />
+                                    <TableColumn prefWidth="75.0" text="Team" fx:id="kickTeamCol" />
                                   </columns>
                                 </TableView>
                               </center>
                               <top>
-                                <TextField alignment="CENTER" prefWidth="200.0" text="Kicker" />
+                                <TextField id="tableTitle" alignment="CENTER" prefWidth="200.0" text="Kicker" />
                               </top>
                             </BorderPane>
                           </children>
@@ -140,14 +140,6 @@
                           </rowConstraints>
                         </GridPane>
                       </center>
-                      <top>
-                        <AnchorPane prefHeight="88.0" prefWidth="450.0">
-                          <children>
-                            <Text layoutX="179.0" layoutY="52.0" scaleX="4.41889378545364" scaleY="2.8326531947843017" strokeType="OUTSIDE" strokeWidth="0.0" text="The Big Tebowski" />
-                            <Line endX="344.0" endY="0.0" layoutX="101.0" layoutY="88.0" startX="-100.0" />
-                          </children>
-                        </AnchorPane>
-                      </top>
                     </BorderPane>
                   </right>
                 </BorderPane>
