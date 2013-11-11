@@ -11,6 +11,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
@@ -26,6 +27,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 
 public class DraftController implements Initializable{
 	
@@ -124,13 +126,7 @@ public class DraftController implements Initializable{
 		
 		positionalColumnInit();
 		
-		if(findPlayer("Adrian Peterson")==null){
-			System.out.println("find problem");
-		}
-		draftQ.peek().addPlayer(findPlayer("Adrian Peterson"));
 		
-		draftQ.peek().addPlayer(findPlayer("Jay Cutler"));
-		draftQ.peek().addPlayer(findPlayer("Fred Davis"));
 		positionalBreakdown(draftQ.peek());
 		
 		
@@ -138,9 +134,18 @@ public class DraftController implements Initializable{
 		
 		rotateDraftOrder();
 		rotateDraftOrder();
+		
+		
+		 
+		
 	}
-
-
+	public ObservableList<Player> getPlayersList(){
+		return players;
+	}
+	
+	public Queue<Team> getDraftQ(){
+		return draftQ;
+	}
 
 	private Player findPlayer(String name){
 		
@@ -158,7 +163,7 @@ public class DraftController implements Initializable{
 	 * This info is on the left side of the Draft Tab
 	 * 
 	 */
-	private void positionalBreakdown(Team currentTeam) {
+	public void positionalBreakdown(Team currentTeam) {
 		TextField currentTeamField = new TextField();
 		currentTeamField.setText(currentTeam.getName());
 		currentTeamField.setId("currentTeamText");
@@ -200,18 +205,14 @@ public class DraftController implements Initializable{
 					teTable.getItems().add(currentPlayer);
 					break;
 			}
-			if(wrTable.getItems().size() ==0 )wrTable.setPlaceholder(new Text(" "));
-			if(qbTable.getItems().size() ==0 )qbTable.setPlaceholder(new Text(" "));
-			if(rbTable.getItems().size() ==0 )rbTable.setPlaceholder(new Text(" "));
-			if(teTable.getItems().size() ==0 )teTable.setPlaceholder(new Text(" "));
-			if(defTable.getItems().size() ==0 )defTable.setPlaceholder(new Text(" "));
-			if(kickTable.getItems().size() ==0 )kickTable.setPlaceholder(new Text(" "));
-
-			 
-			
+			wrTable.setPlaceholder(new Text(" "));
+			qbTable.setPlaceholder(new Text(" "));
+			rbTable.setPlaceholder(new Text(" "));
+			teTable.setPlaceholder(new Text(" "));
+			defTable.setPlaceholder(new Text(" "));
+			kickTable.setPlaceholder(new Text(" "));
 		}
-		
-		
+
 	}
 	
 	
@@ -306,15 +307,18 @@ public class DraftController implements Initializable{
 		return players;
 	}
 	
-	private void removePlayer(String name){
+	public boolean removePlayer(String name){
 		
 		for(int i=0; i<players.size();i++){
 			if(players.get(i).getName().equals(name)){
 				players.remove(i);
+				top10Table.setItems(players);
+				return true;
 			}
 		}
 		
-		top10Table.setItems(players);
+		return false;
+		
 		
 	}
 
