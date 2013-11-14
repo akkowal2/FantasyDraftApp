@@ -3,12 +3,17 @@ package application;
 import java.awt.GridLayout;
 import java.beans.EventHandler;
 import java.lang.reflect.Array;
+import java.lang.reflect.Type;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Queue;
 import java.util.ResourceBundle;
 import java.util.concurrent.ArrayBlockingQueue;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -28,9 +33,14 @@ import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.util.Callback;
+
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.Response;
 
 public class DraftController implements Initializable{
-	
 	
 	@FXML private TableView<Player> top10Table;
 	@FXML private TableView<Player> teamTable;
@@ -65,10 +75,12 @@ public class DraftController implements Initializable{
 	@FXML private TableColumn<Player, String> kickTeamCol;
 	
 	@FXML private AnchorPane currentTeamAnchor;
+	@FXML private AnchorPane anchorPane;
 	@FXML private BorderPane rightDraft;
 	@FXML private BorderPane leftDraft;
 	@FXML private BorderPane bpaTablePane;
 	@FXML private BorderPane draftBorderPane;
+	
 	
 	private GridPane draftOrderGrid;
 	
@@ -76,29 +88,72 @@ public class DraftController implements Initializable{
 	private ObservableList<Player> players;
 	private ObservableList<Team> teams;
 	private Queue<Team> draftQ;
-	
+    private boolean received = false;
+    String leagueName;
+    String leaguePassword;
 	int numTeams;
-	Connect dbCon;
+
+    public DraftController(String leagueName, String leaguePassword){
+        this.leagueName = leagueName;
+        this.leaguePassword = leaguePassword;
+    }
+
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
-		numTeams=8;
+
 		//Database Connection
-		players = databaseConnect();
+
 		
+		//players = databaseConnect();
+
+
 		//teams Array
-		teams = FXCollections.observableArrayList();
-		//testing
-		ArrayList<Team> teamList= new ArrayList<Team>();
-		for(int i=0; i<numTeams;i++){
-			teamList.add(new Team("Team "+ i,null));
-		}
-		teams.addAll(teamList);
+
+        Client client = ClientBuilder.newClient();
+        WebTarget base = client.target("http://draft-env.elasticbeanstalk.com/rest");
+        WebTarget con=base.path("/StartConnection/CloseConnections/"+leagueName+"/"+leaguePassword+"/");
+        Response playerResponse = con.request("application/json").get();
+
+        System.out.println("playerResponse:" + playerResponse);
+
+        if(playerResponse.getStatus()==200){
+            String jsonString =playerResponse.readEntity(String.class);
+            Gson gson = new Gson();
+            Type type = new TypeToken<ArrayList<Player>>() {}.getType();
+            ArrayList<Player> playerList =gson.fromJson(jsonString,type);
+            players = FXCollections.observableArrayList();
+            players.addAll(playerList);
+        }
+        System.out.println("2"+ leagueName);
+        WebTarget teamReq = base.path("/StartConnection/GetTeams/"+leagueName+"/");
+        Response teamResponse = teamReq.request("application/json").get();
+        System.out.println(teamResponse);
+        if(teamResponse.getStatus()==200){
+            System.out.println("is it here");
+            String jsonString =teamResponse.readEntity(String.class);
+            Gson gson = new Gson();
+            Type type = new TypeToken<ArrayList<Team>>() {}.getType();
+            ArrayList<Team> teamList =gson.fromJson(jsonString,type);
+            teams = FXCollections.observableArrayList();
+            teams.addAll(teamList);
+            numTeams = teams.size();
+            System.out.println(teams);
+
+        }
+
+
+        //teams.addAll(data.teams);
+
+
+        //System.out.println(teams);
+		//teams.addAll(data.teams);
 		
 		
 		//Top 10 Table Initialization
 		bpaTableInit();
 		
 		//Team View Table Initialization Mock
+
 		teamTableTab();
 		
 		
@@ -132,13 +187,23 @@ public class DraftController implements Initializable{
 		
 		
 		
-		rotateDraftOrder();
-		rotateDraftOrder();
+		//rotateDraftOrder();
+		//rotateDraftOrder();
 		
 		
 		 
 		
 	}
+    public void setLeagueName(String leagueName){
+        System.out.println("I got " + leagueName);
+        this.leagueName=leagueName;
+
+    }
+    public void setLeaguePassword(String leaguePassword){
+        System.out.println("I got " + leaguePassword);
+        this.leaguePassword=leaguePassword;
+        received = true;
+    }
 	public ObservableList<Player> getPlayersList(){
 		return players;
 	}
@@ -184,27 +249,25 @@ public class DraftController implements Initializable{
 			System.out.println("position"+currentTeam.getPlayers().get(i));
 			if(currentTeam.getPlayers().get(i)==null)continue;
 			System.out.println("position"+currentPlayer.getPosition());
-			switch(currentPlayer.getPosition()){
-				case "WR":
-					wrTable.getItems().add(currentPlayer);
-					break;
-				case "QB":
-					qbTable.getItems().add(currentPlayer);
-					break;
-				case "RB":
-					rbTable.getItems().add(currentPlayer);
-					break;
-					
-				case "DEF":
-					defTable.getItems().add(currentPlayer);
-					break;
-				case "K":
-					kickTable.getItems().add(currentPlayer);
-					break;
-				case "TE":
-					teTable.getItems().add(currentPlayer);
-					break;
-			}
+            String position = currentPlayer.getPosition();
+            if(position.equals("WR")){
+                wrTable.getItems().add(currentPlayer);
+            }
+            else if(position.equals("RB")){
+                rbTable.getItems().add(currentPlayer);
+            }
+            else if(position.equals("QB")){
+                qbTable.getItems().add(currentPlayer);
+            }
+            else if(position.equals("DEF")){
+                defTable.getItems().add(currentPlayer);
+            }
+            else if(position.equals("K")){
+                kickTable.getItems().add(currentPlayer);
+            }
+            else if(position.equals("TE")){
+                teTable.getItems().add(currentPlayer);
+            }
 			wrTable.setPlaceholder(new Text(" "));
 			qbTable.setPlaceholder(new Text(" "));
 			rbTable.setPlaceholder(new Text(" "));
@@ -214,24 +277,46 @@ public class DraftController implements Initializable{
 		}
 
 	}
-	
-	
+	public BorderPane getBpaBorderPane(){
+		return bpaTablePane;
+	}
+	public AnchorPane getAnchorPane(){
+		return anchorPane;
+	}
 	/**
 	 *  Tab to handle the table of drafted players by each team
 	 */
-	private void teamTableTab() {
+	public void teamTableTab() {
+
 		for (int x = 0; x < numTeams; x++){
-			TableColumn<Player, String> newCol = new TableColumn<Player, String>("Team " + x);
-			newCol.setCellValueFactory(new PropertyValueFactory<Player, String>("name"));
+			TableColumn<Player, String> newCol = new TableColumn<Player, String>("name");
+            newCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Player, String>, ObservableValue<String>>() {
+                public ObservableValue<String> call(TableColumn.CellDataFeatures<Player, String> p) {
+                    // p.getValue() returns the Person instance for a particular TableView row
+
+                    return new ReadOnlyObjectWrapper(p.getValue().getName());
+
+                }
+            });
 			teamTable.getColumns().add(newCol);
+			teamTable.setId("teamTable");
+			
 		}
 		
-		ObservableList<Player> testData = FXCollections.observableArrayList();
-		testData.add(new Player("Adrian Peterson", -1, null, null, null, -1));
-		testData.add(new Player("Bobby Hill", -1, null, null, null, -1));
-		testData.add(new Player("OBAMA", -1, null, null, null, -1));
-		testData.add(new Player("Brian Dahmen", -1, null, null, null, -1));
-		teamTable.setItems(testData);
+		Double width =960.0;
+		ObservableList<TableColumn<Player, ?>> columnList = teamTable.getColumns();
+		for (int i=0 ; i<columnList.size(); i++){
+			columnList.get(i).setPrefWidth((width)/numTeams);
+
+		}
+        teamTable.requestFocus();
+		
+
+	}
+	
+	public TableView<Player> getTeamTable(){
+		return teamTable;
+
 	}
 	
 	/**
@@ -244,6 +329,11 @@ public class DraftController implements Initializable{
 		prCol.setCellValueFactory(new PropertyValueFactory<Player, String>("positionalRank"));
 		byeWeek.setCellValueFactory(new PropertyValueFactory<Player,Integer> ("byeWeek"));
 		top10Table.setItems(players);
+		
+		ObservableList<TableColumn<Player, ?>> columnList = top10Table.getColumns();
+		for (int i=0 ; i<columnList.size(); i++){
+			columnList.get(i).setPrefWidth((340.0/top10Table.getColumns().size()));
+		}
 	}
 	
 	/**
@@ -296,16 +386,7 @@ public class DraftController implements Initializable{
 		}
 		draftBorderPane.setLeft(draftOrderGrid);
 	}
-	/**
-	 * Connects to the CPANEL database and adds the top 300 Players from the database to the players ObservableList
-	 * @return
-	 */
-	private ObservableList<Player> databaseConnect() {
-		dbCon = new Connect();
-		ObservableList<Player> players = FXCollections.observableArrayList();
-		players.addAll(dbCon.getPlayerData());
-		return players;
-	}
+
 	
 	public boolean removePlayer(String name){
 		
@@ -345,5 +426,56 @@ public class DraftController implements Initializable{
 		defTeamCol.setCellValueFactory(new PropertyValueFactory<Player,String>("team"));
 		kickTeamCol.setCellValueFactory(new PropertyValueFactory<Player,String>("team"));
 	}
+	
+	
+	
+
+	
+	public TableView<Player> getTop10Table() {
+		return top10Table;
+	}
+	public void setTop10Table(TableView<Player> top10Table) {
+		this.top10Table = top10Table;
+	}
+	public TableView<Player> getQbTable() {
+		return qbTable;
+	}
+	public void setQbTable(TableView<Player> qbTable) {
+		this.qbTable = qbTable;
+	}
+	public TableView<Player> getRbTable() {
+		return rbTable;
+	}
+	public void setRbTable(TableView<Player> rbTable) {
+		this.rbTable = rbTable;
+	}
+	public TableView<Player> getWrTable() {
+		return wrTable;
+	}
+	public void setWrTable(TableView<Player> wrTable) {
+		this.wrTable = wrTable;
+	}
+	public TableView<Player> getTeTable() {
+		return teTable;
+	}
+	public void setTeTable(TableView<Player> teTable) {
+		this.teTable = teTable;
+	}
+	public TableView<Player> getDefTable() {
+		return defTable;
+	}
+	public void setDefTable(TableView<Player> defTable) {
+		this.defTable = defTable;
+	}
+	public TableView<Player> getKickTable() {
+		return kickTable;
+	}
+	public void setKickTable(TableView<Player> kickTable) {
+		this.kickTable = kickTable;
+	}
+	public void setTeamTable(TableView<Player> teamTable) {
+		this.teamTable = teamTable;
+	}
+
 
 }

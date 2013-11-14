@@ -51,3 +51,6 @@
 #top10Table .table-cell{
 	-fx-alignment: CENTER;
 }
+#teamTable .table-cell{
+	-fx-alignment:CENTER;
+}

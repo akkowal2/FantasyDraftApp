@@ -1,5 +1,6 @@
 package application;
 
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -7,30 +8,101 @@ import java.util.concurrent.TimeUnit;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 public class DraftView extends Application{
 	FXMLLoader loader;
-	int x;
+	Scene scene;
+    String leagueName;
+    String leaguePassword;
+    DraftController controller;
+    public DraftView(String leagueName, String leaguePassword){
+
+
+        this.leagueName=leagueName;
+        this.leaguePassword=leaguePassword;
+    }
+
 	@Override
-	public void start(Stage primaryStage) {
+	public void start(final Stage primaryStage) {
+
 		try {
-			loader = new FXMLLoader(getClass().getResource("../fxml/Draft.fxml"));
+
+            loader = new FXMLLoader(getClass().getResource("../fxml/Draft.fxml"));
+            loader.setController(new DraftController(leagueName,leaguePassword));
+
 			BorderPane root = (BorderPane)loader.load();
-			Scene scene = new Scene(root,960,610);
-			scene.getStylesheets().add(getClass().getResource("../css/application.css").toExternalForm());
-			primaryStage.setScene(scene);
-			//primaryStage.setResizable(false);
 			
+			scene = new Scene(root,960,610);
+
+			scene.getStylesheets().add(getClass().getResource("../css/application.css").toExternalForm());
+            primaryStage.setScene(scene);
+
+
+
+		
+			final InvalidationListener resizeColumns = new InvalidationListener(){
+				@Override
+				public void invalidated(Observable arg0) {
+					// TODO Auto-generated method stub
+					new Thread() {
+						// runnable for that thread
+		            	
+		                public void run() {
+		                	Platform.runLater(new Runnable(){
+		                		public void run() {
+		                			// what will be ran in gui thread
+		                				
+		                			
+		                			Double width =scene.getWidth();
+		                    		controller = loader.getController();
+		                    		TableView<Player> teamTable =controller.getTeamTable();
+		                    		centerColumns(width, teamTable);
+		                    			
+		                    	
+		                    		TableView<Player>  top10Table = controller.getTop10Table();
+
+		                    		AnchorPane anchor = controller.getAnchorPane();
+		                    		centerColumns(anchor.getWidth()+anchor.getWidth()*.04,top10Table);
+
+		                		}
+
+
+								private void centerColumns(Double width, TableView<Player> teamTable) {
+									ObservableList<TableColumn<Player, ?>> columnList = teamTable.getColumns();
+									for (int i=0 ; i<columnList.size(); i++){
+										columnList.get(i).setPrefWidth((width-17)/teamTable.getColumns().size());
+									}
+								}
+		                	});
+		                }
+					}.start();
+				}
+				
+			};
+			
+			scene.widthProperty().addListener(resizeColumns);
+			scene.heightProperty().addListener(resizeColumns);
+			
+
+
 			new Thread() {
 
                 // runnable for that thread
                 public void run() {
-                		x=0;
+                		
                     	while(true){
                 			try {
                 				Thread.sleep(1000);
@@ -41,80 +113,39 @@ public class DraftView extends Application{
                 			// update ProgressIndicator on FX thread
 	                        Platform.runLater(new Runnable() {
 	                            public void run() {
-	                            		DraftController controller = (DraftController)loader.getController();
+	                            		controller = loader.getController();
 	                            		
-	                            		controller.rotateDraftOrder();
+	                            		
 	                            		controller.positionalBreakdown(controller.getDraftQ().peek());
+	                            		controller.rotateDraftOrder();
 	                            		Random r = new Random();
 	                            		int random=r.nextInt(300);
 	                            		
 	                            		System.out.println("random::" + random);
 	                            		Player draftedPlayer= controller.getPlayersList().get(random);
 	                            		controller.getDraftQ().peek().addPlayer(draftedPlayer);
+                                        controller.teamTableTab();
 	                            		System.out.println("removed?" + controller.removePlayer(draftedPlayer.getName()));
-	                            		x++;
+
 	                        	}
 	                        });
                 		}
                     }
                 
             }.start();
-			
-			
+
+
+
+
+
 			primaryStage.show();
-			System.out.println("Hello");
-			
-			
-			
-			/*
-			while(true){
-				Thread.sleep(10000);
-				System.out.println("update");
-				
-				controller.rotateDraftOrder();
-				
-			}
-			*/
-			//startScheduledExecutorService(loader);
-			
+
+	
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
-	}
-	
-	
-	private void startScheduledExecutorService(final FXMLLoader loader){
-		 
-        final ScheduledExecutorService scheduler 
-            = Executors.newScheduledThreadPool(1);
- 
-        scheduler.scheduleAtFixedRate(
-                new Runnable(){
-                      
-                    
-                      
-                    @Override
-                    public void run() {
 
-                        Platform.runLater(new Runnable(){
-                            @Override
-                            public void run() {
-                            	DraftController controller = (DraftController)loader.getController();
-                            	while(true){
-                            		System.out.println("herro");
-                            		controller.rotateDraftOrder();
-                            	}
-                            	
-                            }
-                        });
-                             
-                             
-                      
-                          
-                    }
-                }, 
-                1, 
-                1, 
-                TimeUnit.SECONDS);      
-    }
+	}
+
 }
+	

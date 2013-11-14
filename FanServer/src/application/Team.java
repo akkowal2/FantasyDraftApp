@@ -6,11 +6,10 @@ public class Team {
 
 	private String name;
 	private ArrayList<Player> players;
-	private ClientConnection connect;
+
 	
-	public Team(String name, ClientConnection connect){
+	public Team(String name){
 		this.name = name;
-		this.connect = connect;
 		players = new ArrayList<Player>();
 	}
 	
@@ -36,13 +35,6 @@ public class Team {
 		this.players = players;
 	}
 
-	public ClientConnection getConnect() {
-		return connect;
-	}
-
-	public void setConnect(ClientConnection connect) {
-		this.connect = connect;
-	}
 
 
 	
