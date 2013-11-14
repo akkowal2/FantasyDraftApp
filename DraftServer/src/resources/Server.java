@@ -19,7 +19,6 @@ import com.google.gson.Gson;
 
 import server.ClientConnection;
 import core.Draft;
-import core.InitData;
 import dbConnection.Connect;
 import dbConnection.Player;
 import dbConnection.Team;
@@ -29,6 +28,19 @@ public class Server {
 	
 	private SseBroadcaster broadcaster = new SseBroadcaster();
 	ArrayList<Draft> currDrafts = new ArrayList<Draft>();
+	
+	/**
+	 * Clients make a GET request to /Connect.
+	 * Clients need the correct league name and password and also pass in the team name they want.
+	 * If the league exists and is currently open the team will be created and added to the league.
+	 * Upon success, this method will return a json string of the BPA list back to the client.
+	 * 
+	 * @param req
+	 * @param leagueName
+	 * @param leaguePass
+	 * @param teamName
+	 * @return Response 200 or 500 depending on success
+	 */
 	
 	@GET
 	@Path ("/Connect/{leagueName}/{leaguePass}/{teamName}")
@@ -44,8 +56,6 @@ public class Server {
 		    ArrayList<Player> players = con.getPlayerData();
 			Gson gson = new Gson();
 			String json = gson.toJson(players);
-			
-		    
 		    
 			return Response.ok(json, MediaType.APPLICATION_JSON).build();
 		}
@@ -53,19 +63,25 @@ public class Server {
 		return Response.serverError().entity("League Authorization failed, please check you have the right league name and password").build();
 	}
 	
+	/**
+	 * Game manager makes GET request to OpenConnections to create the league and this function initializes everything the league needs.
+	 * Creates a table for the new league and stores the league password and allows new teams to be added to the league
+	 * 
+	 * @param req
+	 * @param leagueName
+	 * @param leaguePass
+	 * @return Response 200 or 500 depending on success
+	 */
+	
 	@GET
 	@Path("/OpenConnections/{leagueName}/{leaguePass}")
 	@Produces("application/json")
 	public Response openConnections(@Context HttpServletRequest req, @PathParam("leagueName") String leagueName, @PathParam("leaguePass") String leaguePass){
-		System.out.println("Request made successfully!");
+		
 		String remoteHost = req.getRemoteHost();
 	    String remoteAddr = req.getRemoteAddr();
 	    int remotePort = req.getRemotePort();
-	    System.out.println("<<OPEN CONNECTIONS>>");
-	    System.out.println("Remote Host: " + remoteHost);
-	    System.out.println("Remote Address: " + remoteAddr);
-	    System.out.println("Remote Port: " + remotePort);
-	    System.out.println("<<OPEN CONNECTIONS>>");
+	    
 	    ClientConnection manager = new ClientConnection(remoteHost, remoteAddr, remotePort);
 	    
 	    Connect con = new Connect();
@@ -82,6 +98,16 @@ public class Server {
 	   
 	}
 	
+	/**
+	 * Game manager makes a GET request to Close Connections to stop adding new teams to league.
+	 * Also returns the BPA list as a json string.
+	 * 
+	 * @param req
+	 * @param leagueName
+	 * @param leaguePass
+	 * @return Response 200 or 500 depending on success
+	 */
+	
 	@GET
 	@Path("/CloseConnections/{leagueName}/{leaguePass}")
 	@Produces("application/json")
@@ -91,23 +117,26 @@ public class Server {
 		String remoteHost = req.getRemoteHost();
 	    String remoteAddr = req.getRemoteAddr();
 	    int remotePort = req.getRemotePort();
-	    System.out.println("<<CLOSE CONNECTIONS>>");
-	    System.out.println("Remote Host: " + remoteHost);
-	    System.out.println("Remote Address: " + remoteAddr);
-	    System.out.println("Remote Port: " + remotePort);
+	    
 	    ClientConnection manager = new ClientConnection(remoteHost, remoteAddr, remotePort);
 		if (con.closeConnections(leagueName, leaguePass, manager)){
 			ArrayList<Player> players = con.getPlayerData();
 			//System.out.println(teams.toString());
 			Gson gson = new Gson();
 			String json = gson.toJson(players);
-			System.out.println("<<CLOSE CONNECTIONS>>");
 			
 			return Response.ok(json, MediaType.APPLICATION_JSON).build(); 
 		}
-		System.out.println("<<CLOSE CONNECTIONS>>");
+		
 		return Response.serverError().entity("You are either not the game manager or have incorrect league information").build();
 	}
+	
+	/**
+	 * Returns a json string of an ArrayList of Team objects associated with the league name
+	 * @param leagueName
+	 * @return Response 200 or 500 depending on success
+	 */
+	
 	
 	@GET
 	@Path("/GetTeams/{leagueName}")
@@ -125,12 +154,22 @@ public class Server {
 		return Response.ok(json, MediaType.APPLICATION_JSON).build(); 
 	}
 	
+	
+	/**
+	 * Method not working yet, need to figure out how to use SSEs.
+	 * Function will maintain connections with clients and broadcast a message when the game manager starts the draft
+	 * 
+	 * @param leagueName
+	 * @param leaguePass
+	 * @return String representing that the connection thread has started
+	 */
+	
 	@GET
 	@Singleton
 	@Path("/Wait/{leagueName}/{leaguePass}")
 	@Produces(MediaType.TEXT_PLAIN)
 	public String waitForDraftStart(@PathParam("leagueName") final String leagueName, @PathParam("leaguePass") final String leaguePass){
-		System.out.println("Waiting for Manager to start Draft");
+		
 		new Thread(new Runnable(){
 
 			@Override
@@ -163,7 +202,7 @@ public class Server {
 					}
 				}
 				
-				System.out.println("Start Draft Triggered");
+				
 				OutboundEvent event = eventBuilder.name("Message").mediaType(MediaType.TEXT_PLAIN_TYPE).data(String.class, "Success").build();
 				broadcaster.broadcast(event);
 				
@@ -171,9 +210,6 @@ public class Server {
 			
 		});
 			
-		
-		
-		
 		return "Waiting for League to Start";
 	}
 	

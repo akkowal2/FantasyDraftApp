@@ -18,7 +18,7 @@ public class Connect {
 	String user;
 	String pass;
 	String driver;
-	//String db;
+	
 	Connection dbCon = null;
 	
 	public Connect(){
@@ -26,10 +26,7 @@ public class Connect {
 		user = "akkowal2_admin";
 		pass = "bears54";
 		driver = "com.mysql.jdbc.Driver";
-		//db = "akkowal2_players";
 		
-        
-       
         try {
         	Class.forName("com.mysql.jdbc.Driver");
             //getting database connection to MySQL server
@@ -47,6 +44,16 @@ public class Connect {
 		
 	}
 	
+	/**
+	 * Adds the new league to the data base by creating a new table for the league.
+	 * The first entry in the table stores the league password for future reference.
+	 * 
+	 * @param leagueName
+	 * @param manager
+	 * @param leaguePass
+	 * @return true or false based on whether the table was successfully created
+	 */
+	
 	public boolean addLeague(String leagueName, ClientConnection manager, String leaguePass){
 		leagueName = leagueName.replaceAll(" ", "_");
 		XStream xstream = new XStream();
@@ -62,7 +69,6 @@ public class Connect {
 					+ "OpenConnections INT)");
 			statement.executeUpdate("insert into " + leagueName + " values (\"LEAGUE PROPERTY\", \""+ xml +"\", null, \"" + leaguePass + "\", 1)");
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			if (e.getMessage().contains("Table") && e.getMessage().contains("already exists")){
 				System.out.println("League Name already taken!");
 				return false;
@@ -72,6 +78,13 @@ public class Connect {
 		
 		return true;
 	}
+	
+	/**
+	 * Obtains an arraylist of Team objects from a particular league.
+	 * 
+	 * @param leagueName
+	 * @return ArrayList<Team> upon success, null otherwise
+	 */
 	
 	public ArrayList<Team> getTeams(String leagueName){
 		leagueName = leagueName.replaceAll(" ", "_");
@@ -98,6 +111,12 @@ public class Connect {
 		
 	}
 	
+	/**
+	 * Used when creating the BPA list in the database.  Only needs to be called once every season.
+	 * 
+	 * @param data
+	 */
+	
 	public void addPlayerData(Player data){
 		try {
 			Statement statement = dbCon.createStatement();
@@ -110,6 +129,12 @@ public class Connect {
 		}
 		
 	}
+	
+	/**
+	 * Function to obtain an ArrayList<Player> for the game manager and clients to use.
+	 * 
+	 * @return ArrayList<Player>
+	 */
 	
 	public ArrayList<Player> getPlayerData(){
 		ArrayList<Player> players = new ArrayList<Player>();
@@ -137,6 +162,10 @@ public class Connect {
 		return players;
 	}
 	
+	/**
+	 * Debugging function for fetching players from DB.
+	 */
+	
 	public void printData(){
 		try {
 			Statement statement = dbCon.createStatement();
@@ -158,6 +187,14 @@ public class Connect {
 		
 	}
 
+	/**
+	 * Function that finds the table associated with the leagueName and verifies that the password stored there matches the given password.
+	 * 
+	 * @param leagueName
+	 * @param leaguePass
+	 * @return true or false depending on success of verification
+	 */
+	
 	public boolean checkAuthorization(String leagueName, String leaguePass) {
 		leagueName = leagueName.replaceAll(" ", "_");
 		try {
@@ -171,6 +208,17 @@ public class Connect {
 		
 		return false;
 	}
+	
+	/**
+	 * Function currently broken and will always return true.
+	 * Function needs to change the flag that indicates no new teams are being added to league.
+	 * No need for game manager authentication anymore.
+	 * 
+	 * @param leagueName
+	 * @param leaguePass
+	 * @param info
+	 * @return true or false
+	 */
 	
 	public boolean closeConnections(String leagueName, String leaguePass, ClientConnection info){//Need to fix this
 		XStream xstream = new XStream();
@@ -213,6 +261,14 @@ public class Connect {
 		System.out.println("Unsuccessful match with game manager");
 		return true;
 	}
+	
+	/**
+	 * Adds a team to an existing league.
+	 * 
+	 * @param leagueName
+	 * @param teamName
+	 * @param info
+	 */
 	
 	public void addConnection(String leagueName, String teamName, ClientConnection info){
 		XStream xstream = new XStream();
