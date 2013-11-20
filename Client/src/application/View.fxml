@@ -22,7 +22,7 @@
     </MenuBar>
     <Pane layoutX="0.0" layoutY="0.0" prefHeight="553.0" prefWidth="175.0">
       <children>
-        <Label alignment="CENTER" contentDisplay="LEFT" layoutX="33.0" layoutY="26.0" prefHeight="50.0" prefWidth="109.0" text="00:00" textAlignment="LEFT" wrapText="false">
+        <Label fx:id="clockLabel" alignment="CENTER" contentDisplay="LEFT" disable="false" layoutX="33.0" layoutY="26.0" prefHeight="50.0" prefWidth="109.0" text="00:00" textAlignment="LEFT" visible="true" wrapText="false">
           <font>
             <Font name="NI7SEG" size="33.0" />
           </font>
@@ -39,29 +39,29 @@
         <Line endX="173.0" endY="365.0" startX="0.0" startY="365.0" />
         <Line endX="173.0" endY="425.0" startX="0.0" startY="425.0" />
         <Line endX="173.0" endY="485.0" startX="0.0" startY="485.0" />
-        <Label layoutX="4.0" layoutY="88.0" text="7. The McClowns">
+        <Label fx:id="onTheClock" layoutX="4.0" layoutY="88.0" text="">
           <font>
             <Font name="MS UI Gothic" size="23.0" />
           </font>
         </Label>
-        <Label alignment="CENTER" layoutX="30.0" layoutY="125.0" prefHeight="60.0" prefWidth="145.0" text="The Shea Nay Nays" textAlignment="CENTER" wrapText="true">
+        <Label id="secondName" fx:id="secondPickName" alignment="CENTER" layoutX="30.0" layoutY="125.0" prefHeight="60.0" prefWidth="145.0" text="" textAlignment="CENTER" wrapText="true">
           <font>
             <Font name="Lucida Sans Unicode" size="15.0" fx:id="x3" />
           </font>
         </Label>
-        <Label alignment="CENTER" font="$x3" layoutX="5.0" layoutY="145.0" text="8." textAlignment="CENTER" />
-        <Label alignment="CENTER" font="$x3" layoutX="5.0" layoutY="205.0" text="9." textAlignment="CENTER" />
-        <Label alignment="CENTER" font="$x3" layoutX="5.0" layoutY="265.0" text="10." textAlignment="CENTER" />
-        <Label alignment="CENTER" font="$x3" layoutX="5.0" layoutY="325.0" text="11." textAlignment="CENTER" />
-        <Label alignment="CENTER" font="$x3" layoutX="5.0" layoutY="385.0" text="12." textAlignment="CENTER" />
-        <Label alignment="CENTER" font="$x3" layoutX="5.0" layoutY="445.0" text="13." textAlignment="CENTER" />
-        <Label alignment="CENTER" font="$x3" layoutX="5.0" layoutY="505.0" text="14." textAlignment="CENTER" />
-        <Label alignment="CENTER" font="$x3" layoutX="30.0" layoutY="185.0" prefHeight="60.0" prefWidth="145.0" text="The Smokin Jays" textAlignment="CENTER" wrapText="true" />
-        <Label alignment="CENTER" font="$x3" layoutX="30.0" layoutY="245.0" prefHeight="60.0" prefWidth="145.0" text="The Sexy Rexys" textAlignment="CENTER" wrapText="true" />
-        <Label alignment="CENTER" font="$x3" layoutX="30.0" layoutY="305.0" prefHeight="60.0" prefWidth="145.0" text="Sweeter than Sweetness" textAlignment="CENTER" wrapText="true" />
-        <Label alignment="CENTER" font="$x3" layoutX="30.0" layoutY="365.0" prefHeight="60.0" prefWidth="145.0" text="Fantasy is My Forte" textAlignment="CENTER" wrapText="true" />
-        <Label alignment="CENTER" font="$x3" layoutX="30.0" layoutY="425.0" prefHeight="60.0" prefWidth="145.0" text="We Alshon Together" textAlignment="CENTER" wrapText="true" />
-        <Label alignment="CENTER" font="$x3" layoutX="30.0" layoutY="485.0" prefHeight="60.0" prefWidth="145.0" text="Thank Ditka for Ditka" textAlignment="CENTER" wrapText="true" />
+        <Label id="second" fx:id="secondPickNumber" alignment="CENTER" font="$x3" layoutX="5.0" layoutY="145.0" text="" textAlignment="CENTER" />
+        <Label id="third" fx:id="thirdPickNumber" alignment="CENTER" font="$x3" layoutX="5.0" layoutY="205.0" text="" textAlignment="CENTER" />
+        <Label id="fourth" fx:id="fourthPickNumber" alignment="CENTER" font="$x3" layoutX="5.0" layoutY="265.0" text="" textAlignment="CENTER" />
+        <Label id="fifth" fx:id="fifthPickNumber" alignment="CENTER" font="$x3" layoutX="5.0" layoutY="325.0" text="" textAlignment="CENTER" />
+        <Label id="sixth" fx:id="sixthPickNumber" alignment="CENTER" font="$x3" layoutX="5.0" layoutY="385.0" text="" textAlignment="CENTER" />
+        <Label id="seventh" fx:id="seventhPickNumber" alignment="CENTER" font="$x3" layoutX="5.0" layoutY="445.0" text="" textAlignment="CENTER" />
+        <Label id="eigth" fx:id="eigthPickNumber" alignment="CENTER" font="$x3" layoutX="5.0" layoutY="505.0" text="" textAlignment="CENTER" />
+        <Label id="thirdName" fx:id="thirdPickName" alignment="CENTER" font="$x3" layoutX="30.0" layoutY="185.0" prefHeight="60.0" prefWidth="145.0" text="" textAlignment="CENTER" wrapText="true" />
+        <Label id="fourthName" fx:id="fourthPickName" alignment="CENTER" font="$x3" layoutX="30.0" layoutY="245.0" prefHeight="60.0" prefWidth="145.0" text="" textAlignment="CENTER" wrapText="true" />
+        <Label id="fifthName" fx:id="fifthPickName" alignment="CENTER" font="$x3" layoutX="30.0" layoutY="305.0" prefHeight="60.0" prefWidth="145.0" text="" textAlignment="CENTER" wrapText="true" />
+        <Label id="sixthName" fx:id="sixthPickName" alignment="CENTER" font="$x3" layoutX="30.0" layoutY="365.0" prefHeight="60.0" prefWidth="145.0" text="" textAlignment="CENTER" wrapText="true" />
+        <Label id="seventhName" fx:id="seventhPickName" alignment="CENTER" font="$x3" layoutX="30.0" layoutY="425.0" prefHeight="60.0" prefWidth="145.0" text="" textAlignment="CENTER" wrapText="true" />
+        <Label id="eigthName" fx:id="eigthPickName" alignment="CENTER" font="$x3" layoutX="30.0" layoutY="485.0" prefHeight="60.0" prefWidth="145.0" text="" textAlignment="CENTER" wrapText="true" />
       </children>
     </Pane>
     <Pane layoutX="172.0" layoutY="188.0" opacity="1.0" prefHeight="366.0" prefWidth="611.0">
@@ -85,7 +85,7 @@
             <Font name="NI7SEG" size="20.0" fx:id="x2" />
           </font>
         </Text>
-        <ListView layoutX="-1.0" layoutY="312.0" prefHeight="214.0" prefWidth="225.0" />
+        <ListView fx:id="teamViews" layoutX="-1.0" layoutY="312.0" prefHeight="214.0" prefWidth="225.0" />
         <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="34.0" layoutX="0.0" layoutY="252.0" stroke="BLACK" strokeType="OUTSIDE" strokeWidth="1.7" width="222.0" />
         <Text font="$x2" layoutX="25.0" layoutY="277.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Team Rosters" />
         <MenuBar fx:id="teamBar" layoutX="-2.0" layoutY="288.0" prefWidth="225.0">
@@ -99,16 +99,16 @@
       <children>
         <RadioButton fx:id="allFilter" layoutX="299.0" layoutY="134.0" mnemonicParsing="false" onMouseClicked="#filterPlayers" selected="true" text="All">
           <toggleGroup>
-            <ToggleGroup fx:id="x1" />
+            <ToggleGroup fx:id="filterGroup" />
           </toggleGroup>
         </RadioButton>
-        <RadioButton fx:id="qbFilter" layoutX="338.0" layoutY="134.0" mnemonicParsing="false" onMouseClicked="#filterPlayers" text="QB" toggleGroup="$x1" />
-        <RadioButton fx:id="defFilter" layoutX="514.0" layoutY="134.0" mnemonicParsing="false" onMouseClicked="#filterPlayers" text="DEF/ST" toggleGroup="$x1" />
-        <RadioButton fx:id="teFilter" layoutX="474.0" layoutY="134.0" mnemonicParsing="false" onMouseClicked="#filterPlayers" text="TE" toggleGroup="$x1" />
-        <RadioButton fx:id="wrFilter" layoutX="427.0" layoutY="134.0" mnemonicParsing="false" onMouseClicked="#filterPlayers" text="WR" toggleGroup="$x1" />
-        <RadioButton fx:id="rbFilter" layoutX="382.0" layoutY="134.0" mnemonicParsing="false" onMouseClicked="#filterPlayers" text="RB" toggleGroup="$x1" />
-        <RadioButton fx:id="kFilter" layoutX="578.0" layoutY="134.0" mnemonicParsing="false" onMouseClicked="#filterPlayers" text="K" toggleGroup="$x1" />
-        <TextField fx:id="search" layoutX="14.0" layoutY="131.0" onKeyReleased="#searchPlayers" prefWidth="202.0" promptText="Search" />
+        <RadioButton fx:id="qbFilter" layoutX="338.0" layoutY="134.0" mnemonicParsing="false" onMouseClicked="#filterPlayers" text="QB" toggleGroup="$filterGroup" />
+        <RadioButton fx:id="defFilter" layoutX="514.0" layoutY="134.0" mnemonicParsing="false" onMouseClicked="#filterPlayers" text="DEF/ST" toggleGroup="$filterGroup" />
+        <RadioButton fx:id="teFilter" layoutX="474.0" layoutY="134.0" mnemonicParsing="false" onMouseClicked="#filterPlayers" text="TE" toggleGroup="$filterGroup" />
+        <RadioButton fx:id="wrFilter" layoutX="427.0" layoutY="134.0" mnemonicParsing="false" onMouseClicked="#filterPlayers" text="WR" toggleGroup="$filterGroup" />
+        <RadioButton fx:id="rbFilter" layoutX="382.0" layoutY="134.0" mnemonicParsing="false" onMouseClicked="#filterPlayers" text="RB" toggleGroup="$filterGroup" />
+        <RadioButton fx:id="kFilter" layoutX="578.0" layoutY="134.0" mnemonicParsing="false" onMouseClicked="#filterPlayers" text="K" toggleGroup="$filterGroup" />
+        <TextField fx:id="search" focusTraversable="false" layoutX="14.0" layoutY="131.0" onKeyReleased="#searchPlayers" prefWidth="202.0" promptText="Search" />
         <Line endX="36.0" endY="63.0" layoutX="-34.0" layoutY="98.0" startX="36.0" startY="-100.0" />
         <ImageView fitHeight="93.0" fitWidth="124.0" layoutX="76.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">
           <image>
@@ -120,8 +120,18 @@
             <Font name="System Italic" size="25.0" />
           </font>
         </Label>
-        <Button fx:id="draftPlayer" cancelButton="false" disable="true" layoutX="506.0" layoutY="97.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="96.0" text="Draft Player" />
+        <Button fx:id="draftPlayer" cancelButton="false" disable="true" layoutX="506.0" layoutY="97.0" mnemonicParsing="false" onMouseClicked="#draftPlayer" prefHeight="26.0" prefWidth="96.0" text="Draft Player" />
       </children>
     </Pane>
+    <Rectangle fx:id="loginRectangle" arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="552.9998779296875" layoutX="0.0" layoutY="0.0" stroke="BLACK" strokeType="INSIDE" visible="false" width="1010.0" />
+    <TextField fx:id="teamNameField" layoutX="405.0" layoutY="234.0" prefWidth="200.0" />
+    <Label fx:id="teamNamePrompt" layoutX="325.0" layoutY="235.0" text="Team Name:" />
+    <Label fx:id="passwordPrompt" layoutX="325.0" layoutY="319.0" text="Password:" />
+    <Label fx:id="loginTitle" layoutX="416.0" layoutY="168.0" text="Enter Draft and Team Information" />
+    <Label id="leagueNameField" fx:id="leagueNamePrompt" layoutX="325.0" layoutY="282.0" text="League Name:" />
+    <TextField fx:id="leagueNameField" layoutX="405.0" layoutY="277.0" prefWidth="200.0" />
+    <PasswordField fx:id="passwordField" layoutX="405.0" layoutY="319.0" prefWidth="200.0" visible="true" />
+    <Button fx:id="draftConnect" layoutX="446.0" layoutY="384.0" mnemonicParsing="false" onMouseClicked="#connectToDraft" text="Connect to Draft" />
+    <Label fx:id="errorText" layoutX="190.0" layoutY="430.0" text="Could not connect to draft.  The league may have not been set up or your information may be incorrect. Please try again." textFill="#cc3100" visible="false" />
   </children>
 </AnchorPane>
