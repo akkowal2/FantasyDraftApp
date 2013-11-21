@@ -1,17 +1,16 @@
 package application;
 
-import java.awt.List;
 import java.lang.reflect.Type;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.ResourceBundle;
 import java.util.Timer;
-import java.util.TimerTask;
-
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.google.gson.Gson;
@@ -33,7 +32,6 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
@@ -41,7 +39,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import Data.*;
-import DBSetup.*;
 
 public class Controller implements Initializable {
 
@@ -98,10 +95,15 @@ public class Controller implements Initializable {
 	
 	@FXML private ListView<String> teamViews;
 	
+	@FXML private Button checkDraftStarted;
+	@FXML private Button update;
+	
 	Model model = new Model();
 	Hashtable<String, RadioButton> filters = new Hashtable<String, RadioButton>();
 	Hashtable<Integer, Label> pickNumbers = new Hashtable<Integer, Label>();
 	Hashtable<Integer, Label> pickNames = new Hashtable<Integer, Label>();
+	ArrayList<String> pickNameStrings = new ArrayList<String>();
+	ArrayList<String> pickNumberStrings = new ArrayList<String>();
 	
 	ArrayList<MenuItem> teamMenus = new ArrayList<MenuItem>();
 	ArrayList<String> draftedPlayers = new ArrayList<String>();
@@ -109,6 +111,7 @@ public class Controller implements Initializable {
 	
 	Timer clock;
 	public int interval= 20;
+	
 
 	
 	
@@ -145,7 +148,7 @@ public class Controller implements Initializable {
 		Player selected = playerTable.getSelectionModel().getSelectedItem();
 		playerInfo.setText(selected.getName()+ " " + selected.getPosition() + " Rank: " + selected.getRank() );
 		playerInfo.setFont(new Font("System", 25));
-		draftPlayer.setDisable(false);
+		//draftPlayer.setDisable(false);
 		
 	}
 	
@@ -156,21 +159,42 @@ public class Controller implements Initializable {
 		model.setPassword(passwordField.getText());
 		
 		Client client = ClientBuilder.newClient();
-		WebTarget base = client.target("http://draft-env.elasticbeanstalk.com/rest/StartConnection/Connect/"+leagueNameField.getText()+"/"+passwordField.getText()+"/"+teamNameField.getText());
+		WebTarget base = client.target("http://draft.elasticbeanstalk.com/rest/StartConnection/Connect/"+leagueNameField.getText()+"/"+passwordField.getText()+"/"+teamNameField.getText());
 		
 		Response res = base.request("application/json").get();
 		
-		String serverResponse = (res.readEntity(String.class));
-		//System.out.println(serverResponse);
-		if(serverResponse.equals("League Authorization failed, please check you have the right league name and password"))
+		if(!(res.getStatus() == 200))
 			errorText.setVisible(true);
 		else{
-			
+			errorText.setVisible(false);
+			String serverResponse = (res.readEntity(String.class));
 			Gson notJson = new Gson();
 			Type type = new TypeToken<ArrayList<Player>>() {}.getType();
 			ArrayList<Player> bpaPlayerList = notJson.fromJson(serverResponse, type);
 		
 			model.initialize(playerTable, bpaPlayerList);
+			
+		}
+		
+	}
+	
+	@FXML private void pollStartDraft(MouseEvent e){
+		
+		Client client = ClientBuilder.newClient();
+		WebTarget base = client.target("http://draft.elasticbeanstalk.com/rest/StartConnection/Wait/"+model.getLeagueName()+"/"+model.getPassword());
+		
+		Response res = base.request("application/json").get();
+		
+		//String serverResponse = (res.getStatus(String.class));
+		
+		if(res.getStatus() == 200){
+			String serverResponse = (res.readEntity(String.class));
+			Gson notJson = new Gson();
+			Type type = new TypeToken<ArrayList<Team>>() {}.getType();
+			
+			
+			ArrayList<Team> tempTeams = (notJson.fromJson(serverResponse, type));
+			model.setTeams(tempTeams);
 			
 			EventHandler<MouseEvent> menuClicks = new EventHandler<MouseEvent>(){
 				public void handle(MouseEvent e){
@@ -179,8 +203,8 @@ public class Controller implements Initializable {
 				}
 			};
 			
+			model.setUpTeams();
 			model.populateTeams(pickNumbers, pickNames, chooseTeam, teamViews, teamMenus, menuClicks);
-			
 			loginTitle.setVisible(false);
 			teamNameField.setVisible(false);
 			leagueNameField.setVisible(false);
@@ -191,43 +215,60 @@ public class Controller implements Initializable {
 			leagueNamePrompt.setVisible(false);
 			loginRectangle.setVisible(false);
 			errorText.setVisible(false);
-			startClock();
+			checkDraftStarted.setVisible(false);
+			
+		}
+		else{
+			errorText.setVisible(true);
+			System.out.println(res.getStatus()+"");
+			System.out.println(res.readEntity(String.class));
 		}
 		
 	}
 	
 	
-	
-	public void startClock() {
+	@FXML private void updateDraft(MouseEvent e){
+		Client client = ClientBuilder.newClient();
+		WebTarget base = client.target("http://draft.elasticbeanstalk.com/rest/Draft/Update/"+model.getLeagueName());
 		
-		int delay = 1000;
-		int period = 1000;
-		clock = new Timer();
-		interval = 20;
-		clock.scheduleAtFixedRate(new TimerTask() {
-		public void run() {
-			 setInterval();
-		   }
-		 }, delay, period);
-		  
-		
-		
+		Response res = base.request("application/json").get();
+		if(res.getStatus() == 200){
+			String serverResponse = (res.readEntity(String.class));
+			Gson notJson = new Gson();
+			Type type = new TypeToken<ArrayList<Player>>() {}.getType();
+			
+			
+			ArrayList<Player> player = (notJson.fromJson(serverResponse, type));
+			
+			if(player.get(0).getName() == model.getLastPicked().getName()){
+				System.out.println("up to date");
+			}
+			else{
+				System.out.println("not up to date");
+				model.setLastPicked(player.get(0));
+				int currTeam = (model.getPick())%model.getTeams().size();
+				Team clientTeam = model.getTeams().get(currTeam);
+			
+			
+				
+				clientTeam.addPlayer(player.get(0));
+				System.out.println(player.get(0)+player.get(0).getName());
+				rotateDraftOrder();
+			
+				model.addPlayerToTeam(player.get(0));
+				//draftedPlayers.add(selected.getName());
+				draftedPlayerNames.add(player.get(0).getName());
+				draftHistory.setItems(draftedPlayerNames);
+			
+				model.removePlayer(player.get(0), playerTable);
+				String toggle = model.findToggle(filterGroup, filters);
+				model.updateTable(search.getText().toLowerCase(), toggle, playerTable);
+			}
+			
+		}
+		else
+			System.out.println(res.readEntity(String.class));
 	}
-	
-	private void setInterval(){
-	    if( interval== 1){ 
-	    	clock.cancel();
-	    	rotateDraftOrder();
-	    	startClock();
-	    }
-	    --interval;
-	}
-	
-	public void setClockLabel(int time){
-		clockLabel.setText(time+"");
-	}
-
-
 
 	@FXML private void draftPlayer(){
 		Player selected = playerTable.getSelectionModel().getSelectedItem();
@@ -236,22 +277,26 @@ public class Controller implements Initializable {
 			playerInfo.setFont(new Font("System", 25));
 		}
 		else{
-			int currTeam = (model.getPick())%8;
-			Team clientTeam = model.getTeams().get(currTeam);
 			
-			clientTeam.addPlayer(selected);
+			
+			model.getClientTeam().addPlayer(selected);
 			rotateDraftOrder();
 			
 			model.addPlayerToTeam(selected);
 			//draftedPlayers.add(selected.getName());
 			draftedPlayerNames.add(selected.getName());
 			draftHistory.setItems(draftedPlayerNames);
+			model.setLastPicked(selected);
 			
 			model.removePlayer(selected, playerTable);
 			String toggle = model.findToggle(filterGroup, filters);
 			model.updateTable(search.getText().toLowerCase(), toggle, playerTable);
-			clock.cancel();
-			startClock();
+			
+			Client client = ClientBuilder.newClient();
+			WebTarget base = client.target("http://draft.elasticbeanstalk.com/rest/Draft/Pick/"+model.getLeagueName()+"/"+model.getClientTeam());
+			Gson converted = new Gson();
+			
+			base.request().post(Entity.entity(converted.toJson(selected), MediaType.APPLICATION_JSON));
 			
 		}
 			
@@ -262,17 +307,26 @@ public class Controller implements Initializable {
 		
 		model.updatePick();
 		int pick = model.getPick();
+		
 		//System.out.println(pick);
 		for(int i = 0; i<pickNames.size(); i++){
 			if(i == 0)
-				pickNames.get(i).setText(pick+". "+teams.get(pick%8).getName());
+				pickNames.get(i).setText(pick+". "+teams.get(pick%(teams.size())).getName());
 			else
-				pickNames.get(i).setText(teams.get((pick+i)%8).getName() + " ");
+				pickNames.get(i).setText(teams.get((pick+i)%teams.size()).getName() + " ");
 			if(i < 7)
 				pickNumbers.get(i).setText((pick+1+i)+".");
 		}
 		
 		
+	}
+	
+	public int getPick(){
+		return model.getPick();
+	}
+	
+	public ArrayList<Team> getTeams(){
+		return model.getTeams();
 	}
 	
 	private void populateHashes() {
@@ -301,6 +355,47 @@ public class Controller implements Initializable {
 		pickNames.put(5, sixthPickName);
 		pickNames.put(6, seventhPickName);
 		pickNames.put(7, eigthPickName);
+		
+	}
+
+	/*public void startClock() {
+		
+		int delay = 1000;
+		int period = 1000;
+		clock = new Timer();
+		interval = 20;
+		clock.scheduleAtFixedRate(new TimerTask() {
+		public void run() {
+			 setInterval();
+		   }
+		 }, delay, period);
+		  
+		
+		
+	}
+	
+	private void setInterval(){
+	    if( interval== 1){ 
+	    	clock.cancel();
+	    	rotateDraftOrder();
+	    	startClock();
+	    }
+	    --interval;
+	}
+	
+	public void setClockLabel(int time){
+		clockLabel.setText(time+"");
+	}*/
+
+	public int getClientPick() {
+		return model.getClientPick();
+	}
+
+
+
+	public void setDraftButtonVisible(Boolean disable) {
+		draftPlayer.setDisable(disable);
+		
 	}
 	
 	

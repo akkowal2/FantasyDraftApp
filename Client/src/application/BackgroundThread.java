@@ -1,8 +1,5 @@
 package application;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 
@@ -40,14 +37,18 @@ public class BackgroundThread extends Thread {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			// update ProgressIndicator on FX thread
+			
 			Platform.runLater(new Runnable() {
 				public void run() {
 					Controller server = (Controller)loader.getController();
-					server.setClockLabel(server.interval);
+				
+					if(!(server.getTeams().size() == 0) && server.getPick()%(server.getTeams().size()) == server.getClientPick()){
+						server.setDraftButtonVisible(false);
+					}
+					else{
+						server.setDraftButtonVisible(true);
+					}
 					
-					//server.testLabelChanges();	
-					//server.rotateDraftOrder();
 				}
 			});
 	   	}

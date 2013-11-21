@@ -7,6 +7,10 @@ import java.util.Hashtable;
 
 
 
+
+
+
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -19,7 +23,6 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.MouseEvent;
-import DBSetup.Connect;
 import Data.Player;
 import Data.Team;
 
@@ -33,31 +36,33 @@ public class Model {
 	
 	
 	private int currentPick;
-	private int totalPicks;
+	private int clientPick;
 	
 	//make a new one?
 	private String teamName;
 	private String leagueName;
 	private String password;
 	
-	
-	
-	
-	
+	private Player lastPicked;
 	
 	public void initialize(TableView<Player> playerTable, ArrayList<Player> dbplayers){
 		
 		players.addAll(dbplayers);
 		playerTable.setItems(players);
-		
-		for(int i=0; i<8;i++){
-			teams.add(new Team("Team "+ i, i));
-			ObservableList<String> willthiswork = FXCollections.observableArrayList();
-			teamPlayerLists.add(willthiswork);
-		}
-		clientTeam = teams.get(0);
 		currentPick = 0;
 		
+	}
+	
+	public void setUpTeams(){
+		for(int i=0; i<teams.size();i++){
+			//teams.add(new Team("Team "+ i, i));
+			ObservableList<String> willthiswork = FXCollections.observableArrayList();
+			teamPlayerLists.add(willthiswork);
+			if(teams.get(i).getName().equals(teamName)){
+				clientTeam = (teams.get(i));
+				clientPick = i;
+			}
+		}
 	}
 	
 	public void updateTable(String searchText, String pos, TableView<Player> playerTable){
@@ -115,18 +120,19 @@ public class Model {
 		
 		for(int i = 0; i < pickNumbers.size(); i++){
 			pickNumbers.get(i).setText((i+1)+".");
-			pickNames.get(i+1).setText(teams.get(i+1).getName());
-			MenuItem team = new MenuItem(teams.get(i).getName());
+			pickNames.get(i+1).setText(teams.get((i+1)%teams.size()).getName());
+			MenuItem team = new MenuItem(teams.get(i%teams.size()).getName());
 			team.addEventHandler(MouseEvent.MOUSE_CLICKED, clicks);
 			teamMenuItems.add(team);
 			chooseTeam.getItems().add(team);
+			
 		}
 		
 	}
 	
 	public void addPlayerToTeam(Player picked){
-		this.teamPlayerLists.get(currentPick%8).add(picked.getName());
-		this.teams.get(currentPick%8).addPlayer(picked);
+		this.teamPlayerLists.get(currentPick%teams.size()).add(picked.getName());
+		this.teams.get(currentPick%teams.size()).addPlayer(picked);
 	}
 	
 	public void setPassword(String password){
@@ -154,8 +160,45 @@ public class Model {
 	}
 
 	public void removePlayer(Player selected, TableView<Player> playerTable) {
-		this.players.remove(selected);
+		for(int i = 0; i < players.size(); i++)
+			if(players.get(i).getName().equals(selected.getName()))
+				players.remove(i);
+	}
+
+	public void waitForDraftStart() {
+		
+	}
+
+	public void setTeams(ArrayList<Team> teams) {
+		this.teams = teams;
+		
+	}
+
+	public String getLeagueName() {
+		return this.leagueName;
 	}
 	
+	public String getPassword(){
+		return this.password;
+	}
+
+	public int getClientPick() {
+		return this.clientPick;
+	}
 	
+	public Player getLastPicked(){
+		return this.lastPicked;
+	}
+	
+	public void setLastPicked(Player player){
+		this.lastPicked = player;
+	}
+
+	public Team getClientTeam() {
+		return clientTeam;
+	}
+
+	public void setClientTeam(Team clientTeam) {
+		this.clientTeam = clientTeam;
+	}
 }
