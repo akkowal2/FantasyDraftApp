@@ -54,20 +54,17 @@ public class Connect {
 	 * @return true or false based on whether the table was successfully created
 	 */
 	
-	public boolean addLeague(String leagueName, ClientConnection manager, String leaguePass){
+	public boolean addLeague(String leagueName, String leaguePass){
 		leagueName = leagueName.replaceAll(" ", "_");
-		XStream xstream = new XStream();
-		String xml = xstream.toXML(manager);
-		System.out.println(xml);
+		
 		try {
 			Statement statement = dbCon.createStatement();
 			statement.executeUpdate("CREATE TABLE " + leagueName + " ("
 					+ "TeamName TEXT,"
-					+ "ConnectionInfo LONGBLOB,"
 					+ "Players LONGBLOB,"
 					+ "LeaguePass TEXT,"
-					+ "OpenConnections INT)");
-			statement.executeUpdate("insert into " + leagueName + " values (\"LEAGUE PROPERTY\", \""+ xml +"\", null, \"" + leaguePass + "\", 1)");
+					+ "Open INT)");
+			statement.executeUpdate("insert into " + leagueName + " values (\"LEAGUE PROPERTY\", null, \"" + leaguePass + "\", 0)");
 		} catch (SQLException e) {
 			if (e.getMessage().contains("Table") && e.getMessage().contains("already exists")){
 				System.out.println("League Name already taken!");
@@ -209,57 +206,9 @@ public class Connect {
 		return false;
 	}
 	
-	/**
-	 * Function currently broken and will always return true.
-	 * Function needs to change the flag that indicates no new teams are being added to league.
-	 * No need for game manager authentication anymore.
-	 * 
-	 * @param leagueName
-	 * @param leaguePass
-	 * @param info
-	 * @return true or false
-	 */
-	
-	public boolean closeConnections(String leagueName, String leaguePass, ClientConnection info){//Need to fix this
-		XStream xstream = new XStream();
-		
-		if (checkAuthorization(leagueName, leaguePass)){
-			Statement statement = null;
-			try {
-				statement = dbCon.createStatement();
-			} catch (SQLException e2) {
-				// TODO Auto-generated catch block
-				e2.printStackTrace();
-			}
-			ResultSet res = null;
-			try {
-				res = statement.executeQuery("SELECT * FROM " + leagueName + " WHERE LeaguePass='" + leaguePass + "'");
-			} catch (SQLException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			String managerXML = null;
-			try {
-				res.first();
-				managerXML = (String) res.getString("ConnectionInfo");
-				System.out.println("Connection Info XML: " + managerXML);
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			ClientConnection manager = (ClientConnection) xstream.fromXML(managerXML);
-			System.out.println("Manager Host: " + manager.host);
-			System.out.println("Manager Address: " + manager.address);
-			System.out.println("Manager Port: " + manager.port);
-			if (manager == info){
-				//Update openConnections to 0 here
-				System.out.println("Successful match with game manager");
-				return true;
-			}
-			
-		}
-		System.out.println("Unsuccessful match with game manager");
-		return true;
+	public boolean addPlayerToTeam(String leagueName, Player player, String teamName){
+		//Add player to team's list
+		return false;
 	}
 	
 	/**
@@ -270,19 +219,49 @@ public class Connect {
 	 * @param info
 	 */
 	
-	public void addConnection(String leagueName, String teamName, ClientConnection info){
-		XStream xstream = new XStream();
-		String xml = xstream.toXML(info);
+	public boolean addConnection(String leagueName, String teamName){
+		
 		try {
-			Statement statement = dbCon.createStatement();
-			String query ="insert into " + leagueName + " values (\"" + teamName + "\",\""+ xml +"\", null" + "," + "\"n/a\", " + "-1" + ")";
+			Statement statement1 = dbCon.createStatement();
+			String query = "SELECT * FROM " + leagueName + " WHERE Open=0";
+			ResultSet res = statement1.executeQuery(query);
+			if (!res.first()) return false;
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			return false;
+		}
+		
+		try {
+			Statement statement2 = dbCon.createStatement();
+			String query ="insert into " + leagueName + " values (\"" + teamName + "\", null" + "," + "\"n/a\", " + " -1)";
 			System.out.println(query);
-			statement.executeUpdate(query);
+			statement2.executeUpdate(query);
 			System.out.println("Player added to League");
+			
+			return true;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		return false;
+	}
+
+	public void closeConnection(String leagueName) {
+		Statement statement2;
+		try {
+			statement2 = dbCon.createStatement();
+			String query ="UPDATE " + leagueName.replaceAll(" ", "_") + " SET Open=-1";
+			System.out.println(query);
+			statement2.executeUpdate(query);
+			System.out.println(leagueName + " is not accepting anymore clients");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
 	}
 	
 

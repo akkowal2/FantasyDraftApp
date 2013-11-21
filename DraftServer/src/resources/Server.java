@@ -14,20 +14,21 @@ import javax.ws.rs.core.Response;
 
 import org.glassfish.jersey.media.sse.OutboundEvent;
 import org.glassfish.jersey.media.sse.SseBroadcaster;
+import org.glassfish.jersey.media.sse.SseFeature;
 
 import com.google.gson.Gson;
 
 import server.ClientConnection;
-import core.Draft;
+import core.DraftInfo;
 import dbConnection.Connect;
 import dbConnection.Player;
 import dbConnection.Team;
 
+@Singleton
 @Path ("/StartConnection")
 public class Server {
 	
-	private SseBroadcaster broadcaster = new SseBroadcaster();
-	ArrayList<Draft> currDrafts = new ArrayList<Draft>();
+	static ArrayList<DraftInfo> currDraftInfos = new ArrayList<DraftInfo>();
 	
 	/**
 	 * Clients make a GET request to /Connect.
@@ -42,21 +43,27 @@ public class Server {
 	 * @return Response 200 or 500 depending on success
 	 */
 	
+	public static ArrayList<DraftInfo> getDraftInfos(){
+		return currDraftInfos;
+	}
+	
 	@GET
 	@Path ("/Connect/{leagueName}/{leaguePass}/{teamName}")
 	@Produces("application/json")
-	public Response connect(@Context HttpServletRequest req, @PathParam("leagueName") String leagueName, @PathParam("leaguePass") String leaguePass, @PathParam("teamName") String teamName){
+	public Response connect(@PathParam("leagueName") String leagueName, @PathParam("leaguePass") String leaguePass, @PathParam("teamName") String teamName){
 		Connect con = new Connect();
 		if (con.checkAuthorization(leagueName, leaguePass)){
-			String remoteHost = req.getRemoteHost();
-		    String remoteAddr = req.getRemoteAddr();
-		    int remotePort = req.getRemotePort();
-		    ClientConnection client = new ClientConnection(remoteHost, remoteAddr, remotePort);
-		    con.addConnection(leagueName, teamName, client);
+			
+		    boolean result = con.addConnection(leagueName, teamName);
 		    ArrayList<Player> players = con.getPlayerData();
 			Gson gson = new Gson();
 			String json = gson.toJson(players);
 		    
+			if (result == false){
+				return Response.serverError().entity("League has been started already!").build();
+			}
+			
+			
 			return Response.ok(json, MediaType.APPLICATION_JSON).build();
 		}
 		
@@ -76,20 +83,16 @@ public class Server {
 	@GET
 	@Path("/OpenConnections/{leagueName}/{leaguePass}")
 	@Produces("application/json")
-	public Response openConnections(@Context HttpServletRequest req, @PathParam("leagueName") String leagueName, @PathParam("leaguePass") String leaguePass){
-		
-		String remoteHost = req.getRemoteHost();
-	    String remoteAddr = req.getRemoteAddr();
-	    int remotePort = req.getRemotePort();
-	    
-	    ClientConnection manager = new ClientConnection(remoteHost, remoteAddr, remotePort);
+	public Response openConnections(@PathParam("leagueName") String leagueName, @PathParam("leaguePass") String leaguePass){
 	    
 	    Connect con = new Connect();
-	    boolean result = con.addLeague(leagueName, manager, leaguePass);
+	    boolean result = con.addLeague(leagueName, leaguePass);
 	    
 	    if (result){
-	    	Draft newDraft = new Draft(leagueName, leaguePass);
-			currDrafts.add(newDraft);
+	    	DraftInfo newDraftInfo = new DraftInfo(leagueName, leaguePass);
+			currDraftInfos.add(newDraftInfo);
+			
+			//Establish connection for DraftInfo here
 	    	return Response.ok("League Added").build();
 	    }
 	    else{
@@ -111,19 +114,24 @@ public class Server {
 	@GET
 	@Path("/CloseConnections/{leagueName}/{leaguePass}")
 	@Produces("application/json")
-	public Response closeConnections(@Context HttpServletRequest req, @PathParam("leagueName") String leagueName, @PathParam("leaguePass") String leaguePass){
+	public Response closeConnections(@PathParam("leagueName") String leagueName, @PathParam("leaguePass") String leaguePass){
 		
 		Connect con = new Connect();
-		String remoteHost = req.getRemoteHost();
-	    String remoteAddr = req.getRemoteAddr();
-	    int remotePort = req.getRemotePort();
-	    
-	    ClientConnection manager = new ClientConnection(remoteHost, remoteAddr, remotePort);
-		if (con.closeConnections(leagueName, leaguePass, manager)){
+		
+		if (con.checkAuthorization(leagueName, leaguePass)){
 			ArrayList<Player> players = con.getPlayerData();
 			//System.out.println(teams.toString());
 			Gson gson = new Gson();
 			String json = gson.toJson(players);
+			
+			con.closeConnection(leagueName);
+			
+			for (DraftInfo curr : currDraftInfos){
+				if (curr.compareDraftInfo(leagueName, leaguePass)){
+					curr.startDraft();
+					break;
+				}
+			}
 			
 			return Response.ok(json, MediaType.APPLICATION_JSON).build(); 
 		}
@@ -154,63 +162,30 @@ public class Server {
 		return Response.ok(json, MediaType.APPLICATION_JSON).build(); 
 	}
 	
-	
-	/**
-	 * Method not working yet, need to figure out how to use SSEs.
-	 * Function will maintain connections with clients and broadcast a message when the game manager starts the draft
-	 * 
-	 * @param leagueName
-	 * @param leaguePass
-	 * @return String representing that the connection thread has started
-	 */
-	
 	@GET
-	@Singleton
 	@Path("/Wait/{leagueName}/{leaguePass}")
-	@Produces(MediaType.TEXT_PLAIN)
-	public String waitForDraftStart(@PathParam("leagueName") final String leagueName, @PathParam("leaguePass") final String leaguePass){
-		
-		new Thread(new Runnable(){
-
-			@Override
-			public void run() {
-				OutboundEvent.Builder eventBuilder = new OutboundEvent.Builder();
-				while (true){
-					try {
-						Thread.sleep(600);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					boolean leagueStart = false;
-					boolean draftExists = false;
-					for (Draft index : currDrafts){
-						if (index.compareDraftInfo(leagueName, leaguePass)){
-							draftExists = true;
-							if (index.draftReady()){
-								leagueStart = true;
-								break;
-							}
-						}
-					}
-					
-					if (leagueStart) break;
-					else if (!draftExists){
-						OutboundEvent event = eventBuilder.name("Message").mediaType(MediaType.TEXT_PLAIN_TYPE).data(String.class, "Failure").build();
-						broadcaster.broadcast(event);
-						return;
-					}
+	@Produces("application/json")
+	public Response waitForDraftInfo(@PathParam("leagueName") String leagueName, @PathParam("leaguePass") String leaguePass){
+		System.out.println("There are " + currDraftInfos.size() + " drafts");
+		for (DraftInfo curr : currDraftInfos){
+			if (curr.compareDraftInfo(leagueName, leaguePass) && curr.draftReady()){
+				Connect con = new Connect();
+				ArrayList<Team> teams = con.getTeams(leagueName);
+				if (teams == null){
+					return Response.serverError().entity("Incorrect League Name").build();
 				}
 				
+				Gson gson = new Gson();
+				String json = gson.toJson(teams);
 				
-				OutboundEvent event = eventBuilder.name("Message").mediaType(MediaType.TEXT_PLAIN_TYPE).data(String.class, "Success").build();
-				broadcaster.broadcast(event);
-				
+				return Response.ok(json, MediaType.APPLICATION_JSON).build();
 			}
-			
-		});
-			
-		return "Waiting for League to Start";
+			else if (curr.compareDraftInfo(leagueName, leaguePass) && !curr.draftReady()){
+				return Response.serverError().entity("Draft is not ready yet.").build();
+			}	
+		}
+		
+		return Response.serverError().entity("Draft does not exist yet or you have incorrect league information").build();
 	}
 	
 }
