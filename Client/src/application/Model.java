@@ -186,8 +186,10 @@ public class Model {
 		return this.clientPick;
 	}
 	
-	public Player getLastPicked(){
-		return this.lastPicked;
+	public String getLastPicked(){
+		if(this.lastPicked == null)
+			return "";
+		return this.lastPicked.getName();
 	}
 	
 	public void setLastPicked(Player player){

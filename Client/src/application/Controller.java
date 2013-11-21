@@ -240,7 +240,7 @@ public class Controller implements Initializable {
 			
 			ArrayList<Player> player = (notJson.fromJson(serverResponse, type));
 			
-			if(player.get(0).getName() == model.getLastPicked().getName()){
+			if(player.get(0).getName().equals(model.getLastPicked())){
 				System.out.println("up to date");
 			}
 			else{
