@@ -7,7 +7,7 @@
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane fx:id="backgroundPane" minHeight="600.0" minWidth="800.0" prefHeight="500.0" prefWidth="900.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" >
+<BorderPane fx:id="backgroundPane" minHeight="600.0" minWidth="800.0" prefHeight="500.0" prefWidth="900.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
   <center>
     <TabPane prefHeight="33.0" prefWidth="900.0" tabClosingPolicy="UNAVAILABLE" tabMinWidth="425.0" BorderPane.alignment="CENTER">
       <tabs>
@@ -41,6 +41,9 @@
                   </center>
                   <right>
                     <BorderPane fx:id="rightDraft" maxWidth="700.0" prefHeight="545.0" prefWidth="450.0">
+                      <bottom>
+                        <BorderPane fx:id="bottomPaneButton" prefHeight="80.0" prefWidth="450.0" />
+                      </bottom>
                       <center>
                         <GridPane prefHeight="545.0" prefWidth="450.0">
                           <children>
@@ -153,15 +156,7 @@
         </Tab>
         <Tab fx:id="researchTab" closable="false" text="Research">
           <content>
-            <BorderPane prefHeight="200.0" prefWidth="200.0">
-              <center>
-                <BorderPane prefHeight="200.0" prefWidth="200.0">
-                  <center>
-                    <TableView fx:id="teamTable" prefHeight="492.0" prefWidth="992.0" />
-                  </center>
-                </BorderPane>
-              </center>
-            </BorderPane>
+            <BorderPane fx:id="researchPane" prefHeight="200.0" prefWidth="200.0" />
           </content>
         </Tab>
       </tabs>

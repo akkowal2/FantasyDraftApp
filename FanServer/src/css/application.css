@@ -1,9 +1,10 @@
 #teamNames{
 	-fx-text-fill: white;
     -fx-background-color: grey;
-    -fx-font-family: Courier New;
-    -fx-font-weight: bold;
-    -fx-font-size: 20;
+    -fx-font: 20px  "Razer Regular";
+
+
+    -fx-alignment: center;
 }
 #clockText{
 	-fx-text-fill: black;
@@ -17,8 +18,8 @@
 }
 #currentTeamText{
 	-fx-background-color:#E0E0E0;
-	-fx-font-family: Consolas;
-    -fx-font-size: 40;
+    -fx-font: 35px  "Razer Regular";
+    -fx-alignment: center;
 }
 #clockPane{
 	-fx-background-color:#C8C8C8;
@@ -44,13 +45,36 @@
     -fx-font-weight: bold;
     -fx-font-size: 45;
 }
+#researchNames{
+    -fx-text-fill: dimgrey;
+    -fx-background-color: white ;
+    -fx-font: 35px  "Razer Regular";
+
+
+    -fx-alignment: center;
+
+
+}
 #posTable .table-cell{
 	
-	-fx-alignment: CENTER;
+	-fx-alignment: center;
 }
 #top10Table .table-cell{
-	-fx-alignment: CENTER;
+	-fx-alignment: center;
 }
 #teamTable .table-cell{
-	-fx-alignment:CENTER;
+    -fx-alignment:center;
+}
+#teamTables .table-cell{
+    -fx-alignment:center;
+}
+#teamTables .table-cell{
+    -fx-alignment:center;
+}
+#connectionTable .table-cell{
+    -fx-alignment:center;
+    -fx-text-fill: dimgrey;
+
+    -fx-font: 15px  "Consolas";
+
 }
