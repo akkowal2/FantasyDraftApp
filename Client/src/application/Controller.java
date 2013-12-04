@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.ResourceBundle;
 import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -25,7 +26,6 @@ import com.google.gson.reflect.TypeToken;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -103,9 +103,6 @@ public class Controller implements Initializable {
 	
 	@FXML private ListView<String> teamViews;
 	
-	@FXML private Button checkDraftStarted;
-	@FXML private Button update;
-	
 	Model model = new Model();
 	Hashtable<String, RadioButton> filters = new Hashtable<String, RadioButton>();
 	Hashtable<Integer, Label> pickNumbers = new Hashtable<Integer, Label>();
@@ -119,11 +116,6 @@ public class Controller implements Initializable {
 	
 	Timer clock;
 	public int interval= 20;
-	
-	boolean isStarted = false;
-	
-
-	
 	
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
@@ -158,7 +150,6 @@ public class Controller implements Initializable {
 		Player selected = playerTable.getSelectionModel().getSelectedItem();
 		playerInfo.setText(selected.getName()+ " " + selected.getPosition() + " Rank: " + selected.getRank() );
 		playerInfo.setFont(new Font("System", 25));
-		//draftPlayer.setDisable(false);
 		
 	}
 	
@@ -179,9 +170,9 @@ public class Controller implements Initializable {
 			errorText.setVisible(false);
 			
 			Client clientSuccess = ClientBuilder.newBuilder().register(SseFeature.class).build();
-			String fuck = "http://finalproject54.servehttp.com:8080/Sync/"+model.getLeagueName()+"/false";
-			System.out.println(fuck);
-	        WebTarget target = clientSuccess.target(fuck);
+			String sync = "http://finalproject54.servehttp.com:8080/Sync/"+model.getLeagueName()+"/false";
+			System.out.println(sync);
+	        WebTarget target = clientSuccess.target(sync);
 	       
 	        System.out.println(model.getLeagueName());
 	        EventSource eventSource = EventSource.target(target).build();
@@ -200,9 +191,6 @@ public class Controller implements Initializable {
 	        			
 	        			final Response res2 = base2.request("application/json").get();
 	        			
-	        			//System.out.println(res2.getStatus()+"");
-        				//System.out.println(res2.readEntity(String.class));
-	        			
 	        			
 	        			if(res2.getStatus() == 200){
 	        				
@@ -213,22 +201,15 @@ public class Controller implements Initializable {
 	        				ArrayList<Team> tempTeams = (notJson.fromJson(serverResponse, type));
 	        				
 	        				model.setTeams(tempTeams);
-	        				
-	        				/*EventHandler<MouseEvent> menuClicks = new EventHandler<MouseEvent>(){
-	        					public void handle(MouseEvent e){
-	        						System.out.println("event");
-	        						e.consume();
-	        					}
-	        				};*/
-	        				
 	        				model.setUpTeams();
 	        				
 	        				Platform.runLater(new Runnable() {
 	        					public void run() {
 	        						Connect con = new Connect();
 	        						model.initialize(playerTable, con.getPlayerData());
-	        						EventHandler<MouseEvent> menuClicks = null;
-	        						model.populateTeams(pickNumbers, pickNames, chooseTeam, teamViews, teamMenus, menuClicks);
+	        						
+	        						
+	        						model.populateTeams(pickNumbers, pickNames, chooseTeam, teamViews, teamMenus);
 	        						System.out.println("before gui");
 	    	        				loginTitle.setVisible(false);
 	    	        				teamNameField.setVisible(false);
@@ -240,13 +221,10 @@ public class Controller implements Initializable {
 	    	        				leagueNamePrompt.setVisible(false);
 	    	        				loginRectangle.setVisible(false);
 	    	        				errorText.setVisible(false);
-	    	        				checkDraftStarted.setVisible(false);
 	    	        				System.out.println("after");
+	    	        				startClock();
 	        					}
 	        				});
-							
-							
-	        				
 	        			}
 	        			else{
 	        				errorText.setVisible(true);
@@ -261,17 +239,13 @@ public class Controller implements Initializable {
         				final Player tempPlayer = (notJson.fromJson(player, type));
         				Platform.runLater(new Runnable() {
         					public void run() {
-        						int currTeam = (model.getPick())%model.getTeams().size();
-        						Team clientTeam = model.getTeams().get(currTeam);
-        					
-        					
         						
+        						int currTeamIndex = (model.getPick())%model.getTeams().size();
+        						Team clientTeam = model.getTeams().get(currTeamIndex);
+        						clock.cancel();
+        						startClock();
         						clientTeam.addPlayer(tempPlayer);
-        						System.out.println(tempPlayer+tempPlayer.getName());
-        						//rotateDraftOrder();
-        					
-        						model.addPlayerToTeam(tempPlayer);
-        						//draftedPlayers.add(selected.getName());
+        						rotateDraftOrder();
         						draftedPlayerNames.add(tempPlayer.getName());
         						draftHistory.setItems(draftedPlayerNames);
         					
@@ -279,140 +253,14 @@ public class Controller implements Initializable {
         						String toggle = model.findToggle(filterGroup, filters);
         						model.updateTable(search.getText().toLowerCase(), toggle, playerTable);
         					}
-        				});
-        				
-	            		
-	            	}
-	            		
-	            		
-					
-				}
-
-				
-	        	
+        				});	
+	            	}			
+				}	
 	        };
 	        
 	        eventSource.register(listener);
 	        eventSource.open();
-	        
-	       
-			
-			
-			/*while(!isStarted){
-				//busy wait
-				System.out.println("busy");
-				try {
-					Thread.sleep(2000);
-				} catch (InterruptedException e) {
-					
-					e.printStackTrace();
-				}
-			}*/
-			
-			System.out.println("outside busy");
-			
-			//Client client = ClientBuilder.newClient();
-			
-			
-			
-			
 		}
-		
-	}
-	
-	@FXML private void pollStartDraft(MouseEvent e){
-		
-		Client client = ClientBuilder.newClient();
-		WebTarget base = client.target("http://draft.elasticbeanstalk.com/rest/StartConnection/Wait/"+model.getLeagueName()+"/"+model.getPassword());
-		
-		Response res = base.request("application/json").get();
-		
-		//String serverResponse = (res.getStatus(String.class));
-		
-		if(res.getStatus() == 200){
-			String serverResponse = (res.readEntity(String.class));
-			Gson notJson = new Gson();
-			Type type = new TypeToken<ArrayList<Team>>() {}.getType();
-			
-			
-			ArrayList<Team> tempTeams = (notJson.fromJson(serverResponse, type));
-			model.setTeams(tempTeams);
-			
-			EventHandler<MouseEvent> menuClicks = new EventHandler<MouseEvent>(){
-				public void handle(MouseEvent e){
-					System.out.println("event");
-					e.consume();
-				}
-			};
-			
-			model.setUpTeams();
-			model.populateTeams(pickNumbers, pickNames, chooseTeam, teamViews, teamMenus, menuClicks);
-			loginTitle.setVisible(false);
-			teamNameField.setVisible(false);
-			leagueNameField.setVisible(false);
-			passwordField.setVisible(false);
-			draftConnect.setVisible(false);
-			teamNamePrompt.setVisible(false);
-			passwordPrompt.setVisible(false);
-			leagueNamePrompt.setVisible(false);
-			loginRectangle.setVisible(false);
-			errorText.setVisible(false);
-			checkDraftStarted.setVisible(false);
-			
-		}
-		else{
-			errorText.setVisible(true);
-			System.out.println(res.getStatus()+"");
-			System.out.println(res.readEntity(String.class));
-		}
-		
-	}
-	
-	
-	@FXML private void updateDraft(MouseEvent e){
-		Client client = ClientBuilder.newClient();
-		WebTarget base = client.target("http://draft.elasticbeanstalk.com/rest/Draft/Update/"+model.getLeagueName());
-		
-		Response res = base.request("application/json").get();
-		if(res.getStatus() == 200){
-			String serverResponse = (res.readEntity(String.class));
-			Gson notJson = new Gson();
-			Type type = new TypeToken<ArrayList<Player>>() {}.getType();
-			
-			
-			ArrayList<Player> player = (notJson.fromJson(serverResponse, type));
-			
-			if(player.get(0).getName().equals(model.getLastPicked())){
-				System.out.println("up to date");
-			}
-			else{
-				System.out.println("not up to date");
-				model.setLastPicked(player.get(0));
-				int currTeam = (model.getPick())%model.getTeams().size();
-				Team clientTeam = model.getTeams().get(currTeam);
-			
-			
-				
-				clientTeam.addPlayer(player.get(0));
-				System.out.println(player.get(0)+player.get(0).getName());
-				rotateDraftOrder();
-			
-				model.addPlayerToTeam(player.get(0));
-				//draftedPlayers.add(selected.getName());
-				draftedPlayerNames.add(player.get(0).getName());
-				draftHistory.setItems(draftedPlayerNames);
-			
-				model.removePlayer(player.get(0), playerTable);
-				String toggle = model.findToggle(filterGroup, filters);
-				model.updateTable(search.getText().toLowerCase(), toggle, playerTable);
-			}
-			
-		}
-		else
-			System.out.println(res.readEntity(String.class));
-	}
-
-	private void updateGui(){
 		
 	}
 	
@@ -423,20 +271,6 @@ public class Controller implements Initializable {
 			playerInfo.setFont(new Font("System", 25));
 		}
 		else{
-			
-			
-			model.getClientTeam().addPlayer(selected);
-			rotateDraftOrder();
-			
-			model.addPlayerToTeam(selected);
-			//draftedPlayers.add(selected.getName());
-			draftedPlayerNames.add(selected.getName());
-			draftHistory.setItems(draftedPlayerNames);
-			model.setLastPicked(selected);
-			
-			model.removePlayer(selected, playerTable);
-			String toggle = model.findToggle(filterGroup, filters);
-			model.updateTable(search.getText().toLowerCase(), toggle, playerTable);
 			
 			Client client = ClientBuilder.newClient();
 			WebTarget base = client.target("http://finalproject54.servehttp.com:8080/Sync/"+model.getLeagueName());
@@ -454,7 +288,6 @@ public class Controller implements Initializable {
 		model.updatePick();
 		int pick = model.getPick();
 		
-		//System.out.println(pick);
 		for(int i = 0; i<pickNames.size(); i++){
 			if(i == 0)
 				pickNames.get(i).setText(pick+". "+teams.get(pick%(teams.size())).getName());
@@ -504,7 +337,7 @@ public class Controller implements Initializable {
 		
 	}
 
-	/*public void startClock() {
+	public void startClock() {
 		
 		int delay = 1000;
 		int period = 1000;
@@ -523,15 +356,13 @@ public class Controller implements Initializable {
 	private void setInterval(){
 	    if( interval== 1){ 
 	    	clock.cancel();
-	    	rotateDraftOrder();
-	    	startClock();
 	    }
 	    --interval;
 	}
 	
 	public void setClockLabel(int time){
 		clockLabel.setText(time+"");
-	}*/
+	}
 
 	public int getClientPick() {
 		return model.getClientPick();
@@ -543,6 +374,7 @@ public class Controller implements Initializable {
 		draftPlayer.setDisable(disable);
 		
 	}
+	
 	
 	
 }

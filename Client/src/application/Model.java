@@ -11,8 +11,13 @@ import java.util.Hashtable;
 
 
 
+
+
+
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -22,7 +27,6 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableView;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.input.MouseEvent;
 import Data.Player;
 import Data.Team;
 
@@ -33,12 +37,8 @@ public class Model {
 	private ArrayList<Team> teams = new ArrayList<Team>();
 	private ArrayList<ObservableList<String>> teamPlayerLists = new ArrayList<ObservableList<String>>();
 	private Team clientTeam;
-	
-	
 	private int currentPick;
 	private int clientPick;
-	
-	//make a new one?
 	private String teamName;
 	private String leagueName;
 	private String password;
@@ -55,7 +55,7 @@ public class Model {
 	
 	public void setUpTeams(){
 		for(int i=0; i<teams.size();i++){
-			//teams.add(new Team("Team "+ i, i));
+			
 			ObservableList<String> willthiswork = FXCollections.observableArrayList();
 			teamPlayerLists.add(willthiswork);
 			if(teams.get(i).getName().equals(teamName)){
@@ -113,24 +113,40 @@ public class Model {
 		
 	}
 	
-	public void populateTeams(Hashtable<Integer, Label> pickNumbers, Hashtable<Integer, Label> pickNames, Menu chooseTeam, ListView<String> teamList, ArrayList<MenuItem> teamMenuItems, EventHandler<MouseEvent> clicks){
+	public void populateTeams(Hashtable<Integer, Label> pickNumbers, Hashtable<Integer, Label> pickNames, Menu chooseTeam, final ListView<String> teamList, ArrayList<MenuItem> teamMenuItems){
 		
 		System.out.println("in here1");
 		pickNames.get(0).setText(currentPick + ". " + teams.get(currentPick).getName());
 		System.out.println("in here2");
 		for(int i = 0; i < pickNumbers.size(); i++){
-			System.out.println("in loop"+i);
+			
 			pickNumbers.get(i).setText((i+1)+".");
 			pickNames.get(i+1).setText(teams.get((i+1)%teams.size()).getName());
-			//MenuItem team = new MenuItem(teams.get(i%teams.size()).getName());
-			//team.addEventHandler(MouseEvent.MOUSE_CLICKED, clicks);
-			//teamMenuItems.add(team);
-			//chooseTeam.getItems().add(team);
 			
+		}
+		for(int i = 0; i < teams.size(); i++){
+			MenuItem team = new MenuItem(teams.get(i).getName());
+			final Team currTeam = teams.get(i);
+			team.setOnAction(new EventHandler<ActionEvent>() {
+			    @Override public void handle(ActionEvent e) {
+			    	ObservableList<String> teamPlayers = FXCollections.observableArrayList();
+			    	System.out.println(currTeam.getName());
+			    	for(int j = 0; j <currTeam.getPlayers().size(); j++){
+			    		System.out.println(currTeam.getPlayers().get(j).getName());
+			    		teamPlayers.add(currTeam.getPlayers().get(j).getName());
+			    	}
+			    	teamList.setItems(teamPlayers);
+			    }
+
+				
+			});
+			teamMenuItems.add(team);
+			chooseTeam.getItems().add(team);
 		}
 		System.out.println("done");
 	}
 	
+
 	public void addPlayerToTeam(Player picked){
 		this.teamPlayerLists.get(currentPick%teams.size()).add(picked.getName());
 		this.teams.get(currentPick%teams.size()).addPlayer(picked);

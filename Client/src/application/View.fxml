@@ -121,7 +121,6 @@
           </font>
         </Label>
         <Button fx:id="draftPlayer" cancelButton="false" disable="true" layoutX="506.0" layoutY="97.0" mnemonicParsing="false" onMouseClicked="#draftPlayer" prefHeight="26.0" prefWidth="96.0" text="Draft Player" />
-        <Button fx:id="updatte" disable="true" layoutX="434.0" layoutY="98.0" mnemonicParsing="false" onMouseClicked="#updateDraft" text="Update" visible="false" />
       </children>
     </Pane>
     <Rectangle fx:id="loginRectangle" arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="552.9998779296875" layoutX="0.0" layoutY="0.0" stroke="BLACK" strokeType="INSIDE" visible="true" width="1010.0" />
@@ -134,6 +133,5 @@
     <PasswordField fx:id="passwordField" layoutX="405.0" layoutY="319.0" prefWidth="200.0" visible="true" />
     <Button fx:id="draftConnect" layoutX="446.0" layoutY="384.0" mnemonicParsing="false" onMouseClicked="#connectToDraft" text="Connect to Draft" />
     <Label fx:id="errorText" layoutX="190.0" layoutY="430.0" text="Could not connect to draft.  The league may have not been set up or your information may be incorrect. Please try again." textFill="#cc3100" visible="false" />
-    <Button fx:id="checkDraftStarted" disable="true" layoutX="456.0" layoutY="475.0" mnemonicParsing="false" onMouseClicked="#pollStartDraft" text="Check server" visible="false" />
   </children>
 </AnchorPane>

@@ -41,12 +41,13 @@ public class BackgroundThread extends Thread {
 			Platform.runLater(new Runnable() {
 				public void run() {
 					Controller server = (Controller)loader.getController();
-				
+					server.setClockLabel(server.interval);
 					if(!(server.getTeams().size() == 0) && server.getPick()%(server.getTeams().size()) == server.getClientPick()){
 						server.setDraftButtonVisible(false);
 					}
 					else{
 						server.setDraftButtonVisible(true);
+						
 					}
 					
 					
