@@ -49,6 +49,8 @@ public class BackgroundThread extends Thread {
 						server.setDraftButtonVisible(true);
 					}
 					
+					
+					
 				}
 			});
 	   	}

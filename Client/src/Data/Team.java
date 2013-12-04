@@ -15,6 +15,10 @@ public class Team {
 		this.setPick(pick);
 	}
 	
+	public Team(String name2) {
+		this.name = name2;
+	}
+
 	public void addPlayer(Player newGuy){
 		players.add(newGuy);
 	}

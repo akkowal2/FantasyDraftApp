@@ -115,19 +115,20 @@ public class Model {
 	
 	public void populateTeams(Hashtable<Integer, Label> pickNumbers, Hashtable<Integer, Label> pickNames, Menu chooseTeam, ListView<String> teamList, ArrayList<MenuItem> teamMenuItems, EventHandler<MouseEvent> clicks){
 		
+		System.out.println("in here1");
 		pickNames.get(0).setText(currentPick + ". " + teams.get(currentPick).getName());
-		
-		
+		System.out.println("in here2");
 		for(int i = 0; i < pickNumbers.size(); i++){
+			System.out.println("in loop"+i);
 			pickNumbers.get(i).setText((i+1)+".");
 			pickNames.get(i+1).setText(teams.get((i+1)%teams.size()).getName());
-			MenuItem team = new MenuItem(teams.get(i%teams.size()).getName());
-			team.addEventHandler(MouseEvent.MOUSE_CLICKED, clicks);
-			teamMenuItems.add(team);
-			chooseTeam.getItems().add(team);
+			//MenuItem team = new MenuItem(teams.get(i%teams.size()).getName());
+			//team.addEventHandler(MouseEvent.MOUSE_CLICKED, clicks);
+			//teamMenuItems.add(team);
+			//chooseTeam.getItems().add(team);
 			
 		}
-		
+		System.out.println("done");
 	}
 	
 	public void addPlayerToTeam(Player picked){

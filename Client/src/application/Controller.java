@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.ResourceBundle;
 import java.util.Timer;
+
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -13,9 +14,15 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.glassfish.jersey.media.sse.EventListener;
+import org.glassfish.jersey.media.sse.EventSource;
+import org.glassfish.jersey.media.sse.InboundEvent;
+import org.glassfish.jersey.media.sse.SseFeature;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -38,6 +45,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
+import DBSetup.Connect;
 import Data.*;
 
 public class Controller implements Initializable {
@@ -112,6 +120,8 @@ public class Controller implements Initializable {
 	Timer clock;
 	public int interval= 20;
 	
+	boolean isStarted = false;
+	
 
 	
 	
@@ -159,7 +169,7 @@ public class Controller implements Initializable {
 		model.setPassword(passwordField.getText());
 		
 		Client client = ClientBuilder.newClient();
-		WebTarget base = client.target("http://draft.elasticbeanstalk.com/rest/StartConnection/Connect/"+leagueNameField.getText()+"/"+passwordField.getText()+"/"+teamNameField.getText());
+		WebTarget base = client.target("http://finalproject54.servehttp.com:8080/StartConnection/Connect/"+leagueNameField.getText()+"/"+passwordField.getText()+"/"+teamNameField.getText());
 		
 		Response res = base.request("application/json").get();
 		
@@ -167,12 +177,144 @@ public class Controller implements Initializable {
 			errorText.setVisible(true);
 		else{
 			errorText.setVisible(false);
-			String serverResponse = (res.readEntity(String.class));
-			Gson notJson = new Gson();
-			Type type = new TypeToken<ArrayList<Player>>() {}.getType();
-			ArrayList<Player> bpaPlayerList = notJson.fromJson(serverResponse, type);
-		
-			model.initialize(playerTable, bpaPlayerList);
+			
+			Client clientSuccess = ClientBuilder.newBuilder().register(SseFeature.class).build();
+			String fuck = "http://finalproject54.servehttp.com:8080/Sync/"+model.getLeagueName()+"/false";
+			System.out.println(fuck);
+	        WebTarget target = clientSuccess.target(fuck);
+	       
+	        System.out.println(model.getLeagueName());
+	        EventSource eventSource = EventSource.target(target).build();
+	        
+	        EventListener listener = new EventListener(){
+
+				@Override
+				public void onEvent(InboundEvent inboundEvent) {
+					System.out.println(inboundEvent.getName() + "; "+ inboundEvent.readData(String.class));
+	            	if(inboundEvent.getName().equals("Workaround"))
+	            		return;
+	            	else if(inboundEvent.getName().equals("Draft Started")){
+	            		System.out.println("in started");
+	            		final Client client2 = ClientBuilder.newClient();
+	            		final WebTarget base2 = client2.target("http://finalproject54.servehttp.com:8080/StartConnection/GetTeams/"+model.getLeagueName());
+	        			
+	        			final Response res2 = base2.request("application/json").get();
+	        			
+	        			//System.out.println(res2.getStatus()+"");
+        				//System.out.println(res2.readEntity(String.class));
+	        			
+	        			
+	        			if(res2.getStatus() == 200){
+	        				
+	        				String serverResponse = (res2.readEntity(String.class));
+	        				
+	        				Gson notJson = new Gson();
+	        				Type type = new TypeToken<ArrayList<Team>>() {}.getType();
+	        				ArrayList<Team> tempTeams = (notJson.fromJson(serverResponse, type));
+	        				
+	        				model.setTeams(tempTeams);
+	        				
+	        				/*EventHandler<MouseEvent> menuClicks = new EventHandler<MouseEvent>(){
+	        					public void handle(MouseEvent e){
+	        						System.out.println("event");
+	        						e.consume();
+	        					}
+	        				};*/
+	        				
+	        				model.setUpTeams();
+	        				
+	        				Platform.runLater(new Runnable() {
+	        					public void run() {
+	        						Connect con = new Connect();
+	        						model.initialize(playerTable, con.getPlayerData());
+	        						EventHandler<MouseEvent> menuClicks = null;
+	        						model.populateTeams(pickNumbers, pickNames, chooseTeam, teamViews, teamMenus, menuClicks);
+	        						System.out.println("before gui");
+	    	        				loginTitle.setVisible(false);
+	    	        				teamNameField.setVisible(false);
+	    	        				leagueNameField.setVisible(false);
+	    	        				passwordField.setVisible(false);
+	    	        				draftConnect.setVisible(false);
+	    	        				teamNamePrompt.setVisible(false);
+	    	        				passwordPrompt.setVisible(false);
+	    	        				leagueNamePrompt.setVisible(false);
+	    	        				loginRectangle.setVisible(false);
+	    	        				errorText.setVisible(false);
+	    	        				checkDraftStarted.setVisible(false);
+	    	        				System.out.println("after");
+	        					}
+	        				});
+							
+							
+	        				
+	        			}
+	        			else{
+	        				errorText.setVisible(true);
+	        				System.out.println(res2.getStatus()+"");
+	        				System.out.println(res2.readEntity(String.class));
+	        			}
+	            	}
+	            	else if(inboundEvent.getName().equals("Player Picked")){
+	            		String player = inboundEvent.readData(String.class);
+	            		Gson notJson = new Gson();
+        				Type type = new TypeToken<Player>() {}.getType();
+        				final Player tempPlayer = (notJson.fromJson(player, type));
+        				Platform.runLater(new Runnable() {
+        					public void run() {
+        						int currTeam = (model.getPick())%model.getTeams().size();
+        						Team clientTeam = model.getTeams().get(currTeam);
+        					
+        					
+        						
+        						clientTeam.addPlayer(tempPlayer);
+        						System.out.println(tempPlayer+tempPlayer.getName());
+        						//rotateDraftOrder();
+        					
+        						model.addPlayerToTeam(tempPlayer);
+        						//draftedPlayers.add(selected.getName());
+        						draftedPlayerNames.add(tempPlayer.getName());
+        						draftHistory.setItems(draftedPlayerNames);
+        					
+        						model.removePlayer(tempPlayer, playerTable);
+        						String toggle = model.findToggle(filterGroup, filters);
+        						model.updateTable(search.getText().toLowerCase(), toggle, playerTable);
+        					}
+        				});
+        				
+	            		
+	            	}
+	            		
+	            		
+					
+				}
+
+				
+	        	
+	        };
+	        
+	        eventSource.register(listener);
+	        eventSource.open();
+	        
+	       
+			
+			
+			/*while(!isStarted){
+				//busy wait
+				System.out.println("busy");
+				try {
+					Thread.sleep(2000);
+				} catch (InterruptedException e) {
+					
+					e.printStackTrace();
+				}
+			}*/
+			
+			System.out.println("outside busy");
+			
+			//Client client = ClientBuilder.newClient();
+			
+			
+			
 			
 		}
 		
@@ -270,6 +412,10 @@ public class Controller implements Initializable {
 			System.out.println(res.readEntity(String.class));
 	}
 
+	private void updateGui(){
+		
+	}
+	
 	@FXML private void draftPlayer(){
 		Player selected = playerTable.getSelectionModel().getSelectedItem();
 		if(selected == null){
@@ -293,7 +439,7 @@ public class Controller implements Initializable {
 			model.updateTable(search.getText().toLowerCase(), toggle, playerTable);
 			
 			Client client = ClientBuilder.newClient();
-			WebTarget base = client.target("http://draft.elasticbeanstalk.com/rest/Draft/Pick/"+model.getLeagueName()+"/"+model.getClientTeam());
+			WebTarget base = client.target("http://finalproject54.servehttp.com:8080/Sync/"+model.getLeagueName());
 			Gson converted = new Gson();
 			
 			base.request().post(Entity.entity(converted.toJson(selected), MediaType.APPLICATION_JSON));

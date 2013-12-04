@@ -70,7 +70,7 @@ public class PopulateDB implements ActionListener{
 
 		Connect connect = new Connect();
 		for (Player player : players){
-			connect.addData(player);
+			//connect.addData(player);
 		}
 	
 		connect.printData();
