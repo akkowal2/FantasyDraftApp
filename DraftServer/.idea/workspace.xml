@@ -12,21 +12,25 @@
     <file path="/fragment.java" changelist="a5cc92ea-9294-4922-be42-58c29a88d64f" time="1385279328896" ignored="false" />
     <file path="/Sync.java" changelist="a5cc92ea-9294-4922-be42-58c29a88d64f" time="1386109276370" ignored="false" />
     <file path="$PROJECT_DIR$/../Client/src/TestServer.java" changelist="a5cc92ea-9294-4922-be42-58c29a88d64f" time="1386112993649" ignored="false" />
-    <file path="$PROJECT_DIR$/../Client/src/TestServer2.java" changelist="a5cc92ea-9294-4922-be42-58c29a88d64f" time="1386109378309" ignored="false" />
+    <file path="$PROJECT_DIR$/../Client/src/TestServer2.java" changelist="a5cc92ea-9294-4922-be42-58c29a88d64f" time="1386189513762" ignored="false" />
     <file path="/TestServer2.java" changelist="a5cc92ea-9294-4922-be42-58c29a88d64f" time="1385279479789" ignored="false" />
     <file path="/TestServer.java" changelist="a5cc92ea-9294-4922-be42-58c29a88d64f" time="1385278929143" ignored="false" />
     <file path="/app.java" changelist="a5cc92ea-9294-4922-be42-58c29a88d64f" time="1385274097697" ignored="false" />
     <file path="/App2.java" changelist="a5cc92ea-9294-4922-be42-58c29a88d64f" time="1385277366248" ignored="false" />
-    <file path="/web.xml" changelist="a5cc92ea-9294-4922-be42-58c29a88d64f" time="1385278370618" ignored="false" />
+    <file path="/web.xml" changelist="a5cc92ea-9294-4922-be42-58c29a88d64f" time="1386192570540" ignored="false" />
     <file path="/Server.java" changelist="a5cc92ea-9294-4922-be42-58c29a88d64f" time="1385278400449" ignored="false" />
     <file path="/App.java" changelist="a5cc92ea-9294-4922-be42-58c29a88d64f" time="1385278418484" ignored="false" />
     <file path="/Draft.java" changelist="a5cc92ea-9294-4922-be42-58c29a88d64f" time="1385278573123" ignored="false" />
     <file path="$PROJECT_DIR$/../Client/src/Player.java" changelist="a5cc92ea-9294-4922-be42-58c29a88d64f" time="1385279378142" ignored="false" />
-    <file path="$PROJECT_DIR$/WebContent/WEB-INF/web.xml" changelist="a5cc92ea-9294-4922-be42-58c29a88d64f" time="1386023323590" ignored="false" />
     <file path="/IDEventOutput.java" changelist="a5cc92ea-9294-4922-be42-58c29a88d64f" time="1386090077486" ignored="false" />
     <file path="/IDBroadcaster.java" changelist="a5cc92ea-9294-4922-be42-58c29a88d64f" time="1386087992838" ignored="false" />
     <file path="/StartConnection.java" changelist="a5cc92ea-9294-4922-be42-58c29a88d64f" time="1386104510839" ignored="false" />
     <file path="/Connect.java" changelist="a5cc92ea-9294-4922-be42-58c29a88d64f" time="1386109011285" ignored="false" />
+    <file path="$PROJECT_DIR$/../TimerTest/src/sample/sample.fxml" changelist="a5cc92ea-9294-4922-be42-58c29a88d64f" time="1386187471056" ignored="false" />
+    <file path="/sample.fxml" changelist="a5cc92ea-9294-4922-be42-58c29a88d64f" time="1386187371663" ignored="false" />
+    <file path="$PROJECT_DIR$/../TimerTest/src/sample/Controller.java" changelist="a5cc92ea-9294-4922-be42-58c29a88d64f" time="1386187941910" ignored="false" />
+    <file path="/Controller.java" changelist="a5cc92ea-9294-4922-be42-58c29a88d64f" time="1386187939952" ignored="false" />
+    <file path="/ServletContextList.java" changelist="a5cc92ea-9294-4922-be42-58c29a88d64f" time="1386192310173" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -51,6 +55,7 @@
     <sortChildren value="false" />
   </component>
   <component name="DebuggerManager">
+    <ui_properties default_suspend_policy="SuspendAll" default_condition_enabled="true" />
     <breakpoint_any default_suspend_policy="SuspendAll" default_condition_enabled="true">
       <breakpoint>
         <option name="NOTIFY_CAUGHT" value="true" />
@@ -87,7 +92,6 @@
         <option name="LOG_MESSAGE" value="" />
       </breakpoint>
     </breakpoint_any>
-    <ui_properties default_suspend_policy="SuspendAll" default_condition_enabled="true" />
     <breakpoint_rules />
     <ui_properties />
   </component>
@@ -106,10 +110,39 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Sync.java" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="Sync.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/resources/Sync.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="152" column="51" selection-start="5147" selection-end="5147" vertical-scroll-proportion="2.2588775">
+            <state line="152" column="51" selection-start="5147" selection-end="5147" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ServletContextList.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/server/ServletContextList.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="25" column="58" selection-start="712" selection-end="712" vertical-scroll-proportion="0.48682705">
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="web.xml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/WebContent/WEB-INF/web.xml">
+          <provider editor-type-id="com.intellij.javaee.module.view.web.viewlets.WebModuleGeneralEditorProvider">
+            <state />
+          </provider>
+          <provider editor-type-id="com.intellij.javaee.module.view.web.viewlets.WebModuleAssemblyDescriptorReferencesProvider">
+            <state />
+          </provider>
+          <provider editor-type-id="com.intellij.javaee.module.view.web.viewlets.WebModuleAssemblyDescriptorProvider">
+            <state />
+          </provider>
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="19" column="45" selection-start="848" selection-end="848" vertical-scroll-proportion="-12.92">
               <folding />
             </state>
           </provider>
@@ -184,7 +217,6 @@
         <option value="$PROJECT_DIR$/src/resources/app.java" />
         <option value="$PROJECT_DIR$/src/resources/App.java" />
         <option value="$PROJECT_DIR$/src/resources/App2.java" />
-        <option value="$PROJECT_DIR$/WebContent/WEB-INF/web.xml" />
         <option value="$PROJECT_DIR$/src/resources/Server.java" />
         <option value="$PROJECT_DIR$/src/privateResources/DraftInfo.java" />
         <option value="$PROJECT_DIR$/src/server/App.java" />
@@ -194,6 +226,8 @@
         <option value="$PROJECT_DIR$/src/privateResources/Connect.java" />
         <option value="$PROJECT_DIR$/src/resources/Sync.java" />
         <option value="$PROJECT_DIR$/src/resources/StartConnection.java" />
+        <option value="$PROJECT_DIR$/src/server/ServletContextList.java" />
+        <option value="$PROJECT_DIR$/WebContent/WEB-INF/web.xml" />
       </list>
     </option>
   </component>
@@ -239,8 +273,8 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="PackagesPane" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -274,6 +308,24 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="WebContent" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="DraftServer" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="DraftServer" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="WebContent" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="WEB-INF" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -356,6 +408,7 @@
   <component name="PropertiesComponent">
     <property name="project.structure.last.edited" value="Libraries" />
     <property name="GoToFile.includeJavaFiles" value="false" />
+    <property name="OverrideImplement.combined" value="true" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="options.splitter.main.proportions" value="0.3" />
     <property name="options.lastSelected" value="editor.preferences.appearance" />
@@ -367,12 +420,12 @@
     <property name="GoToClass.toSaveIncludeLibraries" value="false" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="restartRequiresConfirmation" value="true" />
-    <property name="FullScreen" value="false" />
     <property name="MemberChooser.showClasses" value="true" />
+    <property name="FullScreen" value="false" />
     <property name="GoToClass.includeLibraries" value="false" />
-    <property name="options.splitter.details.proportions" value="0.2" />
-    <property name="options.searchVisible" value="true" />
     <property name="dynamic.classpath" value="false" />
+    <property name="options.searchVisible" value="true" />
+    <property name="options.splitter.details.proportions" value="0.2" />
   </component>
   <component name="PyConsoleOptionsProvider">
     <option name="myPythonConsoleState">
@@ -440,6 +493,19 @@
       <option name="PORT" value="5005" />
       <method />
     </configuration>
+    <configuration default="true" type="Applet" factoryName="Applet">
+      <module name="" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="HTML_FILE_NAME" />
+      <option name="HTML_USED" value="false" />
+      <option name="WIDTH" value="400" />
+      <option name="HEIGHT" value="300" />
+      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
+      <option name="VM_PARAMETERS" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <method />
+    </configuration>
     <configuration default="true" type="TestNG" factoryName="TestNG">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
       <module name="" />
@@ -466,19 +532,6 @@
       <envs />
       <properties />
       <listeners />
-      <method />
-    </configuration>
-    <configuration default="true" type="Applet" factoryName="Applet">
-      <module name="" />
-      <option name="MAIN_CLASS_NAME" />
-      <option name="HTML_FILE_NAME" />
-      <option name="HTML_USED" value="false" />
-      <option name="WIDTH" value="400" />
-      <option name="HEIGHT" value="300" />
-      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
-      <option name="VM_PARAMETERS" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
       <method />
     </configuration>
     <configuration default="true" type="Application" factoryName="Application">
@@ -667,7 +720,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="JetGradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -763,13 +816,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/privateResources/Player.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="5" column="13" selection-start="140" selection-end="140" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/privateResources/Connect.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="14" column="13" selection-start="284" selection-end="284" vertical-scroll-proportion="0.0">
@@ -787,22 +833,6 @@
     <entry file="file://$PROJECT_DIR$/DraftServer.iml">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/WebContent/WEB-INF/web.xml">
-      <provider editor-type-id="com.intellij.javaee.module.view.web.viewlets.WebModuleAssemblyDescriptorReferencesProvider">
-        <state />
-      </provider>
-      <provider editor-type-id="com.intellij.javaee.module.view.web.viewlets.WebModuleAssemblyDescriptorProvider">
-        <state />
-      </provider>
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="20" column="24" selection-start="829" selection-end="829" vertical-scroll-proportion="0.47419804">
-          <folding />
-        </state>
-      </provider>
-      <provider editor-type-id="com.intellij.javaee.module.view.web.viewlets.WebModuleGeneralEditorProvider">
-        <state />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/privateResources/Player.java">
@@ -877,8 +907,33 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/resources/Sync.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="152" column="51" selection-start="5147" selection-end="5147" vertical-scroll-proportion="2.2588775">
+        <state line="152" column="51" selection-start="5147" selection-end="5147" vertical-scroll-proportion="0.0">
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/WebContent/WEB-INF/web.xml">
+      <provider editor-type-id="com.intellij.javaee.module.view.web.viewlets.WebModuleGeneralEditorProvider">
+        <state />
+      </provider>
+      <provider editor-type-id="com.intellij.javaee.module.view.web.viewlets.WebModuleAssemblyDescriptorReferencesProvider">
+        <state />
+      </provider>
+      <provider editor-type-id="com.intellij.javaee.module.view.web.viewlets.WebModuleAssemblyDescriptorProvider">
+        <state />
+      </provider>
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="19" column="45" selection-start="848" selection-end="848" vertical-scroll-proportion="-12.92">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/server/ServletContextList.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="25" column="58" selection-start="712" selection-end="712" vertical-scroll-proportion="0.48682705">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

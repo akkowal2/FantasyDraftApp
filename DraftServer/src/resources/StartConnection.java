@@ -51,10 +51,13 @@ public class StartConnection {
 				return Response.serverError().entity("League has been started already!").build();
 			}
 			
-			
+			con.killItWithFire();
+			con = null;
 			return Response.ok("GET TO DA CHOPPA", MediaType.APPLICATION_JSON).build();
 		}
 		
+		con.killItWithFire();
+		con = null;
 		return Response.serverError().entity("League Authorization failed, please check you have the right league name and password").build();
 	}
 	
@@ -80,9 +83,13 @@ public class StartConnection {
 			currDraftInfos.add(newDraftInfo);
 			
 			//Establish connection for DraftInfo here
+			con.killItWithFire();
+			con = null;
 	    	return Response.ok("League Added").build();
 	    }
 	    else{
+	    	con.killItWithFire();
+	    	con = null;
 	    	return Response.serverError().entity("League Name already exists").build();
 	    }
 	   
@@ -121,10 +128,12 @@ public class StartConnection {
 			}
 
             Sync.closeCon(leagueName, leaguePass);
-			
+			con.killItWithFire();
+			con = null;
 			return Response.ok(json, MediaType.APPLICATION_JSON).build(); 
 		}
-		
+		con.killItWithFire();
+		con = null;
 		return Response.serverError().entity("You are either not the game manager or have incorrect league information").build();
 	}
 	
@@ -141,13 +150,19 @@ public class StartConnection {
 	public Response getTeams(@PathParam("leagueName") String leagueName){
 		Connect con = new Connect();
 		ArrayList<Team> teams = con.getTeams(leagueName);
+		
 		if (teams == null){
+			con.killItWithFire();
+			con = null;
 			return Response.serverError().entity("Incorrect League Name").build();
 		}
 		
 		Gson gson = new Gson();
 		String json = gson.toJson(teams);
 		
+		
+		con.killItWithFire();
+		con = null;
 		return Response.ok(json, MediaType.APPLICATION_JSON).build(); 
 	}
 	
@@ -160,13 +175,18 @@ public class StartConnection {
 			if (curr.compareDraftInfo(leagueName, leaguePass) && curr.draftReady()){
 				Connect con = new Connect();
 				ArrayList<Team> teams = con.getTeams(leagueName);
+				
 				if (teams == null){
+					con.killItWithFire();
+					con = null;
 					return Response.serverError().entity("Incorrect League Name").build();
 				}
 				
 				Gson gson = new Gson();
 				String json = gson.toJson(teams);
 				
+				con.killItWithFire();
+				con = null;
 				return Response.ok(json, MediaType.APPLICATION_JSON).build();
 			}
 			else if (curr.compareDraftInfo(leagueName, leaguePass) && !curr.draftReady()){

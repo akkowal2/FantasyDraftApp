@@ -21,7 +21,7 @@ public class Connect {
 	
 	public Connect(){
 		dbUrl = "jdbc:mysql://engr-cpanel-mysql.engr.illinois.edu/akkowal2_players";
-		user = "akkowal2_admin2";
+		user = "akkowal2_admin";
 		pass = "bears54";
 		driver = "com.mysql.jdbc.Driver";
 		
@@ -259,10 +259,17 @@ public class Connect {
 			System.out.println(leagueName + " is not accepting anymore clients");
 		} catch (SQLException e) {
 			e.printStackTrace();
+		}	
+		
+	}
+	
+	public void killItWithFire(){
+		try {
+			dbCon.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		
-		
-		
 	}
 	
 

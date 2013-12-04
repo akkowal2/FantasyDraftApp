@@ -94,6 +94,7 @@ public class Sync{
 
             con = new Connect();
             teams = con.getTeams(leagueName);
+            
         }
         else{
             eventOutput = new IDEventOutput();
@@ -121,9 +122,13 @@ public class Sync{
                 System.out.println("here");
                 e.printStackTrace();
             }
+            
         }
 
-        con = null;
+        if (con != null){
+        	con.killItWithFire();
+            con = null;
+        }
 
         System.out.println("Returned");
 
