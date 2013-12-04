@@ -1,6 +1,6 @@
 package unitTests;
 
-import static org.junit.Assert.*;
+/*import static org.junit.Assert.*;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -73,4 +73,4 @@ public class TestRequests {
 		System.out.println(res.toString());
 	}
 
-}
+}                                                   */

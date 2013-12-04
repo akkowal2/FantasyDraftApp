@@ -14,10 +14,9 @@ import javax.ws.rs.core.Response;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 
-import core.DraftInfo;
-import dbConnection.Connect;
-import dbConnection.Player;
-import dbConnection.Team;
+import privateResources.DraftInfo;
+import privateResources.Connect;
+import privateResources.Player;
 
 @Path("Draft")
 public class Draft {
@@ -26,7 +25,7 @@ public class Draft {
 	@Path("Pick/{leagueName}/{teamName}")
 	public Response addPlayer(String player, @PathParam("leagueName") String leagueName, @PathParam("teamName") String teamName){
 		DraftInfo draft = null;
-		for (DraftInfo curr : Server.getDraftInfos()){
+		for (DraftInfo curr : StartConnection.getDraftInfos()){
 			if (curr.getLeagueName().equals(leagueName)){
 				draft = curr;
 				break;
@@ -45,7 +44,7 @@ public class Draft {
 		Player tempPlayer = (gson.fromJson(player, type));
 		
 		Connect con = new Connect();
-		boolean result = con.addPlayerToTeam(leagueName, tempPlayer, teamName);
+		con.addPlayerToTeam(leagueName, tempPlayer, teamName);
 		
 		//if (result == false) return Response.serverError().entity("Incorrect Team Name").build();
 		
@@ -59,7 +58,7 @@ public class Draft {
 	@Produces("application/json")
 	public Response getUpdates(@PathParam("leagueName") String leagueName){
 		DraftInfo draft = null;
-		for (DraftInfo curr : Server.getDraftInfos()){
+		for (DraftInfo curr : StartConnection.getDraftInfos()){
 			if (curr.getLeagueName().equals(leagueName)){
 				draft = curr;
 				break;
