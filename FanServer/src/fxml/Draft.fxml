@@ -41,9 +41,6 @@
                   </center>
                   <right>
                     <BorderPane fx:id="rightDraft" maxWidth="700.0" prefHeight="545.0" prefWidth="450.0">
-                      <bottom>
-                        <BorderPane fx:id="bottomPaneButton" prefHeight="80.0" prefWidth="450.0" />
-                      </bottom>
                       <center>
                         <GridPane prefHeight="545.0" prefWidth="450.0">
                           <children>

@@ -10,13 +10,16 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.text.DecimalFormat;
 import java.util.*;
+import java.util.EventListener;
 import java.util.concurrent.ArrayBlockingQueue;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
@@ -37,11 +40,13 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import org.glassfish.jersey.media.sse.*;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
+import org.glassfish.jersey.media.sse.*;
 
 import static com.google.common.base.Charsets.*;
 
@@ -104,34 +109,24 @@ public class DraftController implements Initializable{
         this.leagueName = leagueName;
         this.leaguePassword = leaguePassword;
     }
-
+    boolean draftStarted;
+    boolean countRunning;
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
         virgin = true;
 		//Database Connection
-
-		
-		//players = databaseConnect();
-
-
 		//teams Array
 
         Client client = ClientBuilder.newClient();
-        WebTarget base = client.target("http://draft.elasticbeanstalk.com/rest");
+        WebTarget base = client.target("http://finalproject54.servehttp.com:8080");
         WebTarget con=base.path("/StartConnection/CloseConnections/"+leagueName+"/"+leaguePassword+"/");
-        Response playerResponse = con.request("application/json").get();
+        con.request().get();
+        Connect connection = new Connect();
+        ArrayList<Player> playerList = connection.getPlayerData();
+        players = FXCollections.observableArrayList();
+        players.addAll(playerList);
 
-        System.out.println("playerResponse:" + playerResponse);
 
-        if(playerResponse.getStatus()==200){
-            String jsonString =playerResponse.readEntity(String.class);
-            Gson gson = new Gson();
-            Type type = new TypeToken<ArrayList<Player>>() {}.getType();
-            ArrayList<Player> playerList =gson.fromJson(jsonString,type);
-            players = FXCollections.observableArrayList();
-            players.addAll(playerList);
-        }
-        System.out.println("2"+ leagueName);
         WebTarget teamReq = base.path("/StartConnection/GetTeams/"+leagueName+"/");
         Response teamResponse = teamReq.request("application/json").get();
         System.out.println(teamResponse);
@@ -142,58 +137,16 @@ public class DraftController implements Initializable{
             Type type = new TypeToken<ArrayList<Team>>() {}.getType();
             ArrayList<Team> teamList =gson.fromJson(jsonString,type);
 
-
-
-
-
-
             teams = FXCollections.observableArrayList();
             teams.addAll(teamList);
             numTeams = teams.size();
-            System.out.println(teams);
+            System.out.println("Teams array: "+teams);
 
         }
-
-
-        /*
-        //Fake Practice
-        Client client = ClientBuilder.newClient();
-        WebTarget base = client.target("http://draft.elasticbeanstalk.com/rest");
-        WebTarget con=base.path("/StartConnection/CloseConnections/conkay/kanye/");
-        Response playerResponse = con.request("application/json").get();
-
-        System.out.println("playerResponse:" + playerResponse);
-
-        if(playerResponse.getStatus()==200){
-            String jsonString =playerResponse.readEntity(String.class);
-            Gson gson = new Gson();
-            Type type = new TypeToken<ArrayList<Player>>() {}.getType();
-            ArrayList<Player> playerList =gson.fromJson(jsonString,type);
-            players = FXCollections.observableArrayList();
-            players.addAll(playerList);
-        }
-
-        ArrayList<Team> teamListExample = new ArrayList<Team>();
-        teamListExample.add(new Team("Team1"));
-        teamListExample.add(new Team("Team2"));
-        teamListExample.add(new Team("Team3"));
-        teamListExample.add(new Team("Team4"));
-        teams = FXCollections.observableArrayList();
-        teams.addAll(teamListExample);
-        numTeams = teams.size();
-
-
-        */
-		
-		//Top 10 Table Initialization
+        //Top 10 Table Initialization
 		bpaTableInit();
-		
 		//Team View Table Initialization Mock
-
 		teamTableTab();
-		
-		
-		
 		//Clock Area
 		clockTextArea = new TextField("00:00");
 		clockTextArea.setId("clockText");
@@ -203,20 +156,118 @@ public class DraftController implements Initializable{
 		clockPane.setCenter(clockTextArea);
 		clockPane.setId("clockPane");
 		leftDraft.setTop(clockPane);
-		//Top 10 text
+        final int minutes = 5;
+        final double seconds = 0;
+
+        startCountdown();
+
+
+        //Top 10 text
 		TextField top = new TextField("Top 10");
 		top.setId("topText");
 		top.setAlignment(Pos.CENTER);
 		bpaTablePane.setTop(top);
 		
 		//Mock Draft Order Based off 8 team numbers and arbitrary names
-		draftOrderGridInit();
+		draftOrderGridInit(true);
 		//Current Team Name for Positional Tables
 		positionalColumnInit();
 		positionalBreakdown(draftQ.peek());
 
+        //Start the connection with the server
+        //open the connection with the server
+
+
+        Client clientSSE = ClientBuilder.newBuilder().register(SseFeature.class).build();
+        WebTarget target = clientSSE.target("http://finalproject54.servehttp.com:8080/Sync/"+leagueName+"/true");
+        EventSource eventSource = EventSource.target(target).build();
+        org.glassfish.jersey.media.sse.EventListener listener = new org.glassfish.jersey.media.sse.EventListener() {
+            @Override
+            //This is the listener to collect team information
+            public void onEvent(InboundEvent inboundEvent) {
+                System.out.println(inboundEvent.getName() + "; "+ inboundEvent.readData(String.class));
+                if(inboundEvent.getName().equals("Workaround")){
+                    return;
+                }
+                String jsonString =inboundEvent.readData(String.class);
+                Gson gson = new Gson();
+                Type type = new TypeToken<Player>() {}.getType();
+                Player newPlayer =gson.fromJson(jsonString,type);
+                final Team currentTeam = draftQ.peek();
+                currentTeam.addPlayer(newPlayer);
+                draftQ.add(draftQ.poll());
+                final Team lastTeam = draftQ.peek();
+                removePlayer(newPlayer.getName());
+                Platform.runLater(new Runnable() {
+
+                    @Override
+                    public void run() {
+
+
+                        positionalBreakdown(lastTeam);
+                        teamTableTab();
+                        countRunning=false;
+                        try {
+                            Thread.sleep(1200);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                        }
+                        bpaTableInit();
+                        //rotateDraftOrder();
+                        draftOrderGridInit(false);
+                        startCountdown();
+                    }
+                });
+
+
+            }
+        };
+        eventSource.register(listener);
+        eventSource.open();
+
+
 
 	}
+
+    private void startCountdown() {
+        countRunning = true;
+        new Thread(){
+
+            @Override
+            public void run() {
+
+                for(int i=300;i>0;i--){
+                    if(countRunning==false){
+                        break;
+                    }
+                    final int counter = i;
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                    }
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            int minutes = counter / 60;
+                            int seconds = counter % 60;
+                            System.out.println("seconds: " + seconds);
+                            if (seconds < 10) {
+                                clockTextArea.setText(minutes + ":0" + seconds);
+                            }
+                            else if (seconds ==0) {
+                                clockTextArea.setText(minutes + ":00");
+                            }
+                            else clockTextArea.setText(minutes + ":" + seconds);
+
+                        }
+                    });
+
+                }
+            }
+        }.start();
+    }
+
     public void setLeagueName(String leagueName){
         System.out.println("I got " + leagueName);
         this.leagueName=leagueName;
@@ -236,15 +287,12 @@ public class DraftController implements Initializable{
 	}
 
 	private Player findPlayer(String name){
-		
 		for(int i=0; i<players.size();i++){
 			if(players.get(i).getName().equals(name)){
 				return players.get(i);
 			}
 		}
-	
 		return null;
-			
 	}
 	/**
 	 * Displays the tables relating to the current team. 
@@ -298,7 +346,6 @@ public class DraftController implements Initializable{
 			defTable.setPlaceholder(new Text(" "));
 			kickTable.setPlaceholder(new Text(" "));
 		}
-
 	}
 	public BorderPane getBpaBorderPane(){
 		return bpaTablePane;
@@ -317,13 +364,19 @@ public class DraftController implements Initializable{
         Double width=researchPane.getWidth();
         if(virgin){
             width = 945.0;
-            virgin = false;
+
         }
         for (int x = 0; x < numTeams; x++){
             TableView<Player> teamTable = new TableView<Player>();
             TableColumn<Player, String> nameCol = new TableColumn<Player, String>("name");
             TableColumn<Player, String> posCol = new TableColumn<Player, String>("position");
             TableColumn<Player, String> teamCol = new TableColumn<Player, String>("team");
+            if(virgin){
+                nameCol.setPrefWidth(width/numTeams);
+                teamCol.setPrefWidth(width/numTeams);
+                posCol.setPrefWidth(width/numTeams);
+                virgin=false;
+            }
             nameCol.setPrefWidth((width/numTeams)/3);
             teamCol.setPrefWidth((width/numTeams)/3);
             posCol.setPrefWidth((width/numTeams)/3);
@@ -361,19 +414,6 @@ public class DraftController implements Initializable{
         teamGrid.setPrefHeight(7000);
         teamGrid.setPrefWidth(7000);
 
-        //Double width =960.0;
-        /*
-        //ObservableList<TableColumn<Player, ?>> columnList = teamTable.getColumns();
-        for (int i=0 ; i<columnList.size(); i++){
-
-            columnList.get(i).setPrefWidth((width)/numTeams);
-            columnList.get(i).setText(teams.get(i).getName());
-
-
-
-        }
-        */
-        //teamTable.requestFocus();
         teamGrid.gridLinesVisibleProperty();
         researchPane.setCenter(teamGrid);
 
@@ -404,74 +444,25 @@ public class DraftController implements Initializable{
 	/**
 	 * Initializes the left draft order panel where the order of the teams is determined
 	 */
-	private void draftOrderGridInit() {
-        Button update = new Button();
-        update.setPrefSize(75,10);
-        update.setText("Update");
-        update.setOnAction(new EventHandler<ActionEvent>() {
-            @Override public void handle(ActionEvent e) {
-                System.out.println("Here");
-
-
-                Client client = ClientBuilder.newClient();
-                WebTarget base = client.target("http://draft.elasticbeanstalk.com/rest");
-                WebTarget con=base.path("/Draft/Update/"+leagueName+"/");
-                Response playerResponse = con.request("application/json").get();
-
-                System.out.println("playerResponse:" + playerResponse);
-                ArrayList<Player> lastPlayer = null;
-                if(playerResponse.getStatus()==200){
-                    String jsonString =playerResponse.readEntity(String.class);
-                    Gson gson = new Gson();
-                    Type type = new TypeToken<ArrayList<Player>>() {}.getType();
-                    lastPlayer =gson.fromJson(jsonString,type);
-
-                }
-                else{
-                    return;
-                }
-                if(lastPlayer==null || lastPlayer.size()==0){
-                    return;
-                }
-                else if(lastPlayer.size()==1){
-                    Team currentTeam = draftQ.peek();
-                    if(currentTeam.getPlayers()==null || !currentTeam.getPlayers().contains(lastPlayer.get(0))){
-                        currentTeam.addPlayer(lastPlayer.get(0));
-                    }
-                    else if(currentTeam.getPlayers().contains(lastPlayer.get(0))){
-                        return;
-                    }
-                }
-                
-
-
-
-                positionalBreakdown(draftQ.peek());
-                teamTableTab();
-                try {
-                    Thread.sleep(5000);
-                } catch (InterruptedException e1) {
-                    e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                }
-                rotateDraftOrder();
-
-
-            }
-        });
-        bottomPaneButton.setCenter(update);
-        update.setAlignment(Pos.CENTER);
-
+	private void draftOrderGridInit(boolean init) {
 		draftOrderGrid = new GridPane();
 		draftOrderGrid.setId("draftOrderGrid");
+        if(init==true){
+            draftQ = new ArrayBlockingQueue<Team>(numTeams);
+            for(int i=0;i<numTeams;i++){
+                draftQ.add(teams.get(i));
 
-		draftQ = new ArrayBlockingQueue<Team>(numTeams);
-		for(int i=0;i<numTeams;i++){
-			draftQ.add(teams.get(i));
+            }
+        }
+        ArrayList<Team> tempList = new ArrayList<Team>();
+        for(int i=0;i<numTeams;i++){
+            tempList.add(draftQ.peek());
+            draftQ.add(draftQ.poll());
+        }
 
-		}
 
 		for(int i=0; i<numTeams; i++){
-			TextField currentTeam = new TextField(teams.get(i).getName());
+			TextField currentTeam = new TextField(tempList.get(i).getName());
 			currentTeam.setId("teamNames");
 			currentTeam.setMinWidth(169);
 			currentTeam.setPrefWidth(169);
@@ -548,53 +539,8 @@ public class DraftController implements Initializable{
 		kickTeamCol.setCellValueFactory(new PropertyValueFactory<Player,String>("team"));
 	}
 
-
-
-
-
-
-
 	public TableView<Player> getTop10Table() {
 		return top10Table;
-	}
-	public void setTop10Table(TableView<Player> top10Table) {
-		this.top10Table = top10Table;
-	}
-	public TableView<Player> getQbTable() {
-		return qbTable;
-	}
-	public void setQbTable(TableView<Player> qbTable) {
-		this.qbTable = qbTable;
-	}
-	public TableView<Player> getRbTable() {
-		return rbTable;
-	}
-	public void setRbTable(TableView<Player> rbTable) {
-		this.rbTable = rbTable;
-	}
-	public TableView<Player> getWrTable() {
-		return wrTable;
-	}
-	public void setWrTable(TableView<Player> wrTable) {
-		this.wrTable = wrTable;
-	}
-	public TableView<Player> getTeTable() {
-		return teTable;
-	}
-	public void setTeTable(TableView<Player> teTable) {
-		this.teTable = teTable;
-	}
-	public TableView<Player> getDefTable() {
-		return defTable;
-	}
-	public void setDefTable(TableView<Player> defTable) {
-		this.defTable = defTable;
-	}
-	public TableView<Player> getKickTable() {
-		return kickTable;
-	}
-	public void setKickTable(TableView<Player> kickTable) {
-		this.kickTable = kickTable;
 	}
 
 

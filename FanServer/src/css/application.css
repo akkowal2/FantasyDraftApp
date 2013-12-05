@@ -21,6 +21,11 @@
     -fx-font: 35px  "Razer Regular";
     -fx-alignment: center;
 }
+#passwordText{
+    -fx-background-color:#E0E0E0;
+    -fx-font: 35px  "Razer Regular";
+    -fx-alignment: center;
+}
 #clockPane{
 	-fx-background-color:#C8C8C8;
 }

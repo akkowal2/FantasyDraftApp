@@ -64,7 +64,7 @@
       <center>
         <BorderPane id="" prefHeight="200.0" prefWidth="200.0">
           <bottom>
-            <TextArea id="" fx:id="instructionBox" prefHeight="200.0" text="This is where the instructions and other info goes" />
+            <BorderPane fx:id="teamInfoPane" prefHeight="200.0" prefWidth="200.0" />
           </bottom>
           <top>
             <Label alignment="CENTER" prefHeight="62.0" prefWidth="448.0" text="Fantasy Draft" textAlignment="CENTER">
@@ -80,10 +80,9 @@
           <items>
             <BorderPane prefHeight="200.0" prefWidth="200.0">
               <center>
-                <AnchorPane id="" minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+                <AnchorPane id="" minHeight="0.0" minWidth="0.0" prefHeight="50.0" prefWidth="448.0">
                   <children>
-                    <Button id="" fx:id="startButton" alignment="CENTER" layoutX="105.0" layoutY="29.0" mnemonicParsing="false" onAction="#startDraft" prefHeight="48.0" prefWidth="238.0" text="Start Draft" />
-                    <Button layoutX="176.0" layoutY="3.0" mnemonicParsing="false" onMouseClicked="#refreshTeams" prefHeight="21.9998779296875" text="Refresh Teams" />
+                    <Button id="" fx:id="startButton" alignment="CENTER" layoutX="97.0" layoutY="16.0" mnemonicParsing="false" onAction="#startDraft" prefHeight="48.0" prefWidth="238.0" text="Start Draft" textOverrun="CLIP" />
                   </children>
                 </AnchorPane>
               </center>

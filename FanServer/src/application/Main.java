@@ -29,22 +29,12 @@ public class Main extends Application {
 	public void start(Stage primaryStage) {
 		try {
 			AnchorPane root = FXMLLoader.load(getClass().getResource("../fxml/Intro2.fxml"));
-			
-			
 			Scene scene = new Scene(root,320,600);
 			scene.getStylesheets().add(getClass().getResource("../css/application.css").toExternalForm());
 			primaryStage.setScene(scene);
 			primaryStage.setResizable(true);
 			primaryStage.show();
 
-
-
-
-
-
-
-
-			//server =  new Server();
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
